@@ -15,6 +15,11 @@
  */
 package gui;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
 /**
  *
  * @author Christoph
@@ -56,6 +61,9 @@ public class Extractum extends javax.swing.JFrame {
         jButtonLoad = new javax.swing.JButton();
         jButtonImport = new javax.swing.JButton();
         jButtonExport = new javax.swing.JButton();
+        filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(5000, 0));
+        jButtonReference = new javax.swing.JButton();
+        jButtonValidateXml = new javax.swing.JButton();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jButtonSettings = new javax.swing.JButton();
         jButtonInfo = new javax.swing.JButton();
@@ -67,6 +75,7 @@ public class Extractum extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Extractum");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        setLocation(new java.awt.Point(100, 100));
         setMinimumSize(new java.awt.Dimension(500, 400));
 
         jTableImport.setModel(new javax.swing.table.DefaultTableModel(
@@ -228,6 +237,19 @@ public class Extractum extends javax.swing.JFrame {
         jButtonExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
         jToolBar.add(jButtonExport);
+        jToolBar.add(filler2);
+
+        jButtonReference.setText("Select reference");
+        jButtonReference.setFocusable(false);
+        jButtonReference.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonReference.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar.add(jButtonReference);
+
+        jButtonValidateXml.setText("Validate XML");
+        jButtonValidateXml.setFocusable(false);
+        jButtonValidateXml.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonValidateXml.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jToolBar.add(jButtonValidateXml);
         jToolBar.add(filler1);
 
         jButtonSettings.setText("Settings");
@@ -284,29 +306,19 @@ public class Extractum extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
+            /* Set the system look and feel */
+            String os = System.getProperty("os.name", "generic").toLowerCase();
+            if ((os.contains("mac")) || (os.contains("darwin"))) {
+                System.setProperty("apple.laf.useScreenMenuBar", "true");
+                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Extractum.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Extractum.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Extractum.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Extractum.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+            Logger.getLogger(Extractum.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -317,12 +329,15 @@ public class Extractum extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.Box.Filler filler1;
+    private javax.swing.Box.Filler filler2;
     private javax.swing.JButton jButtonDbConnection;
     private javax.swing.JButton jButtonExport;
     private javax.swing.JButton jButtonImport;
     private javax.swing.JButton jButtonInfo;
     private javax.swing.JButton jButtonLoad;
+    private javax.swing.JButton jButtonReference;
     private javax.swing.JButton jButtonSettings;
+    private javax.swing.JButton jButtonValidateXml;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar;
