@@ -207,6 +207,7 @@ public class Extractum extends javax.swing.JFrame {
 
         jTabbedPaneMain.addTab("Statistics", jPanelStatistics);
 
+        jToolBar.setFloatable(false);
         jToolBar.setRollover(true);
 
         jButtonDbConnection.setText("DB Connection");
