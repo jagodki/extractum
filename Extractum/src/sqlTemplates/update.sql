@@ -1,0 +1,1 @@
+update &table& set &columns& where &condition&;
