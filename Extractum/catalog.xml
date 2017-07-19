@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/Users/Christoph/GitHub/extractum/Extractum/src/xmlSchema/extractum.xsd" uri="xml-resources/jaxb/schema/extractum.xsd"/>
+</catalog>

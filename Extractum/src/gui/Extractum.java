@@ -15,6 +15,8 @@
  */
 package gui;
 
+import java.awt.Window;
+import java.lang.reflect.Method;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
@@ -30,6 +32,7 @@ public class Extractum extends javax.swing.JFrame {
      * Creates new form Extractum
      */
     public Extractum() {
+        enableOSXFullscreen(this);
         initComponents();
     }
 
@@ -312,7 +315,7 @@ public class Extractum extends javax.swing.JFrame {
             String os = System.getProperty("os.name", "generic").toLowerCase();
             if ((os.contains("mac")) || (os.contains("darwin"))) {
                 System.setProperty("apple.laf.useScreenMenuBar", "true");
-                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Test");
+                System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Extractum");
             }
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
@@ -321,11 +324,24 @@ public class Extractum extends javax.swing.JFrame {
         }
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new Extractum().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Extractum().setVisible(true);
         });
+    }
+    
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public void enableOSXFullscreen(Window window) {
+        String os = System.getProperty("os.name", "generic").toLowerCase();
+        if ((os.contains("mac")) || (os.contains("darwin"))) {        
+            try {
+                Class util = Class.forName("com.apple.eawt.FullScreenUtilities");
+                Class params[] = new Class[]{Window.class, Boolean.TYPE};
+                Method method = util.getMethod("setWindowCanFullScreen", params);
+                method.invoke(util, window, true);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

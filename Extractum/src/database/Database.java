@@ -30,18 +30,17 @@ public class Database {
     private String database;
     private String user;
     private String pw;
-    private Connection connection;
+    private Connection connection = null;
 
     public Database() {
     }
 
-    public Database(String host, String port, String database, String user, String pw, Connection connection) {
+    public Database(String host, String port, String database, String user, String pw) {
         this.host = host;
         this.port = port;
         this.database = database;
         this.user = user;
         this.pw = pw;
-        this.connection = connection;
     }
 
     public String getHost() {
@@ -80,7 +79,7 @@ public class Database {
         return connection;
     }
     
-    public boolean connectToDatabase() {
+    public boolean connectToPostgresDatabase() {
         //check, whether the postgres driver is availlable
         try {
             Class.forName("org.postgresql.Driver");

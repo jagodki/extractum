@@ -15,10 +15,65 @@
  */
 package database;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Christoph
  */
 public class PostgresCommunication {
+    
+    private Database db;
+    ResultSet rs = null;
+    Statement st =  null;
+
+    public PostgresCommunication() {
+    }
+
+    public PostgresCommunication(Database db) {
+        this.db = db;
+    }
+
+    public Database getDb() {
+        return db;
+    }
+
+    public void setDb(Database db) {
+        this.db = db;
+    }
+    
+    public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets) {
+        
+    }
+    
+    public boolean updateData(String table, String[] columns, String[] colTypes, String[] datasets) {
+        
+    }
+    
+    public boolean createTable(String tableName, String[] columnNames, String[] colTypes) {
+        //create the statement
+        String sqlCommand = "create table " + tableName + "(\n";
+        for(int i = 0; i < columnNames.length; i++) {
+            sqlCommand += columnNames[i] + " " + colTypes[i];
+            if(i != columnNames.length - 1) {
+                sqlCommand += ",\n";
+            }
+        }
+        sqlCommand += ");";
+        
+        //execute the statement
+        try {
+            this.st = this.db.getConnection().createStatement();
+            st.executeUpdate(sqlCommand);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
     
 }

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!DOCTYPE database SYSTEM "extractum.xsd">
+<database>
+	<table name="test">
+		<columns>
+			<col name="id" type="serial"/>
+			<col name="name" type="character varying"/>
+		</columns>
+		<sql>
+			select * from test where id > 3;
+		</sql>
+		<createStatement>
+			create table...
+		</createStatement>
+		<primaryKeys>
+			<primaryKey column="id"/>
+			<primaryKey column="id2"/>
+		</primaryKeys>
+		<foreignKeys name="fk_test">
+			<foreignKey column="id2" reftable="test2"/>
+		</foreignKeys>
+		<path>
+			/Users/Christoph/Desktop/test.json
+		</path>
+	</table>
+	<table name="test2">
+		<columns>
+			<col name="id" type="serial"/>
+		</columns>
+		<sql>
+			select * from test where id > 5;
+		</sql>
+		<createStatement>
+			create table...
+		</createStatement>
+		<primaryKeys>
+			<primaryKey column="id"/>
+		</primaryKeys>
+		<foreignKeys/>
+		<path>
+			/Users/Christoph/Desktop/test.json
+		</path>
+	</table>
+</database>
