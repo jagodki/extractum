@@ -45,19 +45,23 @@ public class Extractum extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroupImport = new javax.swing.ButtonGroup();
         jTabbedPaneMain = new javax.swing.JTabbedPane();
         jPanelImport = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableImport = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextAreaImportSql = new javax.swing.JTextArea();
+        jPanel1 = new javax.swing.JPanel();
+        jRadioButtonInsert = new javax.swing.JRadioButton();
+        jRadioButtonUpdate = new javax.swing.JRadioButton();
         jPanelExport = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTableImportExport = new javax.swing.JTable();
-        jScrollPane5 = new javax.swing.JScrollPane();
-        jTableExportSchema = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextAreaExportSql = new javax.swing.JTextArea();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanelStatistics = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         jButtonDbConnection = new javax.swing.JButton();
@@ -99,13 +103,44 @@ public class Extractum extends javax.swing.JFrame {
         jTextAreaImportSql.setRows(5);
         jScrollPane3.setViewportView(jTextAreaImportSql);
 
+        jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder(""), "Import Options"));
+
+        buttonGroupImport.add(jRadioButtonInsert);
+        jRadioButtonInsert.setText("Insert");
+
+        buttonGroupImport.add(jRadioButtonUpdate);
+        jRadioButtonUpdate.setText("Update");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jRadioButtonInsert)
+                    .addComponent(jRadioButtonUpdate))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jRadioButtonInsert)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jRadioButtonUpdate)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jPanelImportLayout = new javax.swing.GroupLayout(jPanelImport);
         jPanelImport.setLayout(jPanelImportLayout);
         jPanelImportLayout.setHorizontalGroup(
             jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelImportLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
@@ -113,14 +148,20 @@ public class Extractum extends javax.swing.JFrame {
         jPanelImportLayout.setVerticalGroup(
             jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelImportLayout.createSequentialGroup()
-                .addContainerGap()
                 .addGroup(jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addComponent(jScrollPane3))
+                    .addGroup(jPanelImportLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane1))
+                    .addGroup(jPanelImportLayout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
         jTabbedPaneMain.addTab("Import", jPanelImport);
+
+        jPanelExport.setPreferredSize(new java.awt.Dimension(100, 132));
 
         jTableImportExport.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -135,39 +176,20 @@ public class Extractum extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(jTableImportExport);
 
-        jTableExportSchema.setModel(new javax.swing.table.DefaultTableModel(
+        jTextAreaExportSql.setColumns(20);
+        jTextAreaExportSql.setRows(5);
+        jScrollPane6.setViewportView(jTextAreaExportSql);
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null}
             },
             new String [] {
-                "Schema"
+                "Schemas"
             }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jTableExportSchema.getTableHeader().setReorderingAllowed(false);
-        jScrollPane5.setViewportView(jTableExportSchema);
-        jTableExportSchema.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
-        if (jTableExportSchema.getColumnModel().getColumnCount() > 0) {
-            jTableExportSchema.getColumnModel().getColumn(0).setResizable(false);
-        }
-
-        jTextAreaExportSql.setColumns(20);
-        jTextAreaExportSql.setRows(5);
-        jScrollPane6.setViewportView(jTextAreaExportSql);
+        ));
+        jTable1.setPreferredSize(new java.awt.Dimension(100, 64));
+        jScrollPane5.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanelExportLayout = new javax.swing.GroupLayout(jPanelExport);
         jPanelExport.setLayout(jPanelExportLayout);
@@ -175,9 +197,9 @@ public class Extractum extends javax.swing.JFrame {
             jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelExportLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
@@ -188,10 +210,10 @@ public class Extractum extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jScrollPane4)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelExportLayout.createSequentialGroup()
+                    .addGroup(jPanelExportLayout.createSequentialGroup()
                         .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jScrollPane6)))
+                        .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
 
@@ -345,6 +367,7 @@ public class Extractum extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroupImport;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.JButton jButtonDbConnection;
@@ -359,16 +382,19 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelExport;
     private javax.swing.JPanel jPanelImport;
     private javax.swing.JPanel jPanelStatistics;
+    private javax.swing.JRadioButton jRadioButtonInsert;
+    private javax.swing.JRadioButton jRadioButtonUpdate;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JTabbedPane jTabbedPaneMain;
-    private javax.swing.JTable jTableExportSchema;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTableImport;
     private javax.swing.JTable jTableImportExport;
     private javax.swing.JTextArea jTextAreaExportSql;
