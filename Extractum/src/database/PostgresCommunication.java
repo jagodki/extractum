@@ -46,24 +46,25 @@ public class PostgresCommunication {
         this.db = db;
     }
     
-    public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets) {
-        
-    }
-    
-    public boolean updateData(String table, String[] columns, String[] colTypes, String[] datasets) {
-        
-    }
-    
-    public boolean createTable(String tableName, String[] columnNames, String[] colTypes) {
-        //create the statement
-        String sqlCommand = "create table " + tableName + "(\n";
-        for(int i = 0; i < columnNames.length; i++) {
-            sqlCommand += columnNames[i] + " " + colTypes[i];
-            if(i != columnNames.length - 1) {
-                sqlCommand += ",\n";
+    public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets, String template) {
+        //create statement
+        String columnsString = "";
+        for(int i = 0; i < columns.length; i++) {
+            columnsString += columns[i];
+            if(i != columns.length - 1) {
+                columnsString += ",\n";
             }
         }
-        sqlCommand += ");";
+        
+        String values = "";
+        for(int i = 0; i < datasets.length; i++) {
+            values += "'" + datasets[i] + "'" + "::" + colTypes[i];
+            if(i != datasets.length - 1) {
+                values += ",\n";
+            }
+        }
+        
+        String sqlCommand = template.replace("&table&", table).replace("&columns&", columnsString).replace("&values&", values);
         
         //execute the statement
         try {
@@ -74,6 +75,37 @@ public class PostgresCommunication {
             Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
+    }
+    
+    public boolean createTable(String tableName, String[] columnNames, String[] colTypes, String template) {
+        //create the statement
+        String columns = "";
+        for(int i = 0; i < columnNames.length; i++) {
+            columns += columnNames[i] + " " + colTypes[i];
+            if(i != columnNames.length - 1) {
+                columns += ",\n";
+            }
+        }
+        
+        String sqlCommand = template.replace("&table&", tableName).replace("&columns&", columns);
+        
+        //execute the statement
+        try {
+            this.st = this.db.getConnection().createStatement();
+            st.executeUpdate(sqlCommand);
+            return true;
+        } catch (SQLException ex) {
+            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
+        }
+    }
+    
+    public boolean SetPrimaryKey(String tableName, String[] columnNames, String template) {
+        
+    }
+    
+    public boolean SetForeignKey(String tableName, String[] columnNames, String referencedTable, String[] referencedColumns, String template) {
+        
     }
     
 }
