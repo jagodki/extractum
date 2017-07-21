@@ -20,7 +20,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 /**
- *
+ * This class provides all information for the connection to a database.
+ * This class is just a connector and is used by other classes, to realise
+ * a communication with the databse.
  * @author Christoph
  */
 public class Database {
@@ -32,9 +34,20 @@ public class Database {
     private String pw;
     private Connection connection = null;
 
+    /**
+     * The empty construtor of this class.
+     */
     public Database() {
     }
 
+    /**
+     * The constructor of this class.
+     * @param host the url of the host as String
+     * @param port the port of the database server as String
+     * @param database the name of the database as String
+     * @param user the user name of the database user as String
+     * @param pw the password of the user as String
+     */
     public Database(String host, String port, String database, String user, String pw) {
         this.host = host;
         this.port = port;
@@ -43,42 +56,83 @@ public class Database {
         this.pw = pw;
     }
 
+    /**
+     * This function returns the url of the host of the database server.
+     * @return the information about the host as String object
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * This function sets a new host.
+     * @param host the information about the host as String object
+     */
     public void setHost(String host) {
         this.host = host;
     }
 
+    /**
+     * This function returns the port of the database server.
+     * @return the port of the server as String object
+     */
     public String getPort() {
         return port;
     }
 
+    /**
+     * This function sets the port of the database server.
+     * @param port the port of the server as String object
+     */
     public void setPort(String port) {
         this.port = port;
     }
 
+    /**
+     * This function returns the name of the database.
+     * @return the name of the database as String object
+     */
     public String getDatabase() {
         return database;
     }
 
+    /**
+     * This function sets the name of the database.
+     * @param database the name of the database as String object
+     */
     public void setDatabase(String database) {
         this.database = database;
     }
 
+    /**
+     * This function returns the user name.
+     * @return the name of the user as String object
+     */
     public String getUser() {
         return user;
     }
 
+    /**
+     * This function sets the name of the user.
+     * @param user the user name as String object
+     */
     public void setUser(String user) {
         this.user = user;
     }
 
-    public Connection getConnection() {
+    /**
+     * This function returns the connection object of the database object.
+     * @return the connection object
+     */
+    protected Connection getConnection() {
         return connection;
     }
     
+    /**
+     * This function try the connection with a database represented by the
+     * member variable of the current object.
+     * @return true whether the connection was successfull, otherwise false
+     */
     public boolean connectToPostgresDatabase() {
         //check, whether the postgres driver is availlable
         try {

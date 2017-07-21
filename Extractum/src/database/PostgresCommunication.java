@@ -18,6 +18,8 @@ package database;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,8 +30,8 @@ import java.util.logging.Logger;
 public class PostgresCommunication {
     
     private Database db;
-    ResultSet rs = null;
-    Statement st =  null;
+    private ResultSet rs = null;
+    private Statement st =  null;
 
     public PostgresCommunication() {
     }
@@ -68,6 +70,7 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
+            this.st = null;
             this.st = this.db.getConnection().createStatement();
             st.executeUpdate(sqlCommand);
             return true;
@@ -91,6 +94,7 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
+            this.st = null;
             this.st = this.db.getConnection().createStatement();
             st.executeUpdate(sqlCommand);
             return true;
@@ -100,12 +104,38 @@ public class PostgresCommunication {
         }
     }
     
-    public boolean SetPrimaryKey(String tableName, String[] columnNames, String template) {
-        
-    }
-    
-    public boolean SetForeignKey(String tableName, String[] columnNames, String referencedTable, String[] referencedColumns, String template) {
-        
+    public List<String> selectData(String sqlCommand) {
+        //execute the statement
+        try {
+            this.st = this.db.getConnection().createStatement();
+            this.rs = st.executeQuery(sqlCommand);
+            
+            //create the resulting list
+            List<String> result = new ArrayList<>();
+            int i = 0;
+            while(this.rs.next()) {
+                String resultEntry = "";
+                try {
+                    resultEntry += this.rs.getString(i) + ";";
+                } catch(Exception ex) {
+                    //exception will be thrown, if index is out of bounds
+                    if(resultEntry.length() > 0) {
+                        //remove the last character (;) from our result string
+                        resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
+                        result.add(resultEntry);
+                    } else {
+                        //problem detected
+                        
+                    }
+                }
+                i++;
+            }
+            return result;
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
     
 }
