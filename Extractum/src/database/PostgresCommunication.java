@@ -182,5 +182,23 @@ public class PostgresCommunication {
             return null;
         }
     }
+
+    public List<String> selectColumnNamesTypesOfTable(String table, String template) {
+        String sqlStatement = template.replace("&table&", table);
+        List<String> result = this.selectData(sqlStatement);
+        return result;
+    }
+    
+    public List<String> selectColumnsOfConstraint(String table, String constraint, String template) {
+        String sqlStatement = template.replace("&table&", table).replace("&constraint&", constraint);
+        List<String> result = this.selectData(sqlStatement);
+        return result;
+    }
+    
+    public List<String> selectTablesOfSchema(String schema, String template) {
+        String sqlStatement = template.replace("&schema&", schema);
+        List<String> result = this.selectData(sqlStatement);
+        return result;
+    }
     
 }
