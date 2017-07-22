@@ -24,7 +24,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * This class provides funcionalities for the communication with a PostgreSQL-Server, 
+ * i.e. execute SQL-commands and parsing the results of queries, to provide them 
+ * to other objects.
  * @author Christoph
  */
 public class PostgresCommunication {
@@ -33,21 +35,45 @@ public class PostgresCommunication {
     private ResultSet rs = null;
     private Statement st =  null;
 
+    /**
+     * The empty constructor of the class.
+     */
     public PostgresCommunication() {
     }
 
+    /**
+     * The constructor of this class
+     * @param db a Database object
+     */
     public PostgresCommunication(Database db) {
         this.db = db;
     }
 
+    /**
+     * This function returns the Database object of the class.
+     * @return the Database object
+     */
     public Database getDb() {
         return db;
     }
 
+    /**
+     * This function sets a new Database object.
+     * @param db the Database object
+     */
     public void setDb(Database db) {
         this.db = db;
     }
     
+    /**
+     * This function inserts new datasets into a database table.
+     * @param table the name of the table, in which the datasets has to be insert
+     * @param columns an array of column names for inserting the datasets
+     * @param colTypes an array of column types for parsing the datasets in the correct type
+     * @param datasets an array of comma-separeted datasets
+     * @param template the template of the insert-statement
+     * @return true whether insert was correct, otherwise false
+     */
     public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets, String template) {
         //create statement
         String columnsString = "";
@@ -80,6 +106,14 @@ public class PostgresCommunication {
         }
     }
     
+    /**
+     * This function creates a new table in the database
+     * @param tableName the name of the new table
+     * @param columnNames an array of column names for the new table
+     * @param colTypes an array of column types for the new table
+     * @param template a template of the update-SQL-command
+     * @return true whether insert was correct, otherwise false
+     */
     public boolean createTable(String tableName, String[] columnNames, String[] colTypes, String template) {
         //create the statement
         String columns = "";
@@ -104,36 +138,47 @@ public class PostgresCommunication {
         }
     }
     
+    /**
+     * This functions executes a select-statement, i.e. it queries data from the database.
+     * This function returns [null], if an excpetion was thrown or if the sql statement
+     * does not start with the key word <i>select</i>.
+     * @param sqlCommand the sql statement
+     * @return the result set as a List of Strings, each entry contains a comma-separeted dataset
+     */
     public List<String> selectData(String sqlCommand) {
-        //execute the statement
-        try {
-            this.st = this.db.getConnection().createStatement();
-            this.rs = st.executeQuery(sqlCommand);
-            
-            //create the resulting list
-            List<String> result = new ArrayList<>();
-            int i = 0;
-            while(this.rs.next()) {
-                String resultEntry = "";
-                try {
-                    resultEntry += this.rs.getString(i) + ";";
-                } catch(Exception ex) {
-                    //exception will be thrown, if index is out of bounds
-                    if(resultEntry.length() > 0) {
-                        //remove the last character (;) from our result string
-                        resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
-                        result.add(resultEntry);
-                    } else {
-                        //problem detected
-                        
+        if(sqlCommand.startsWith("select")) {
+            //execute the statement
+            try {
+                this.st = this.db.getConnection().createStatement();
+                this.rs = st.executeQuery(sqlCommand);
+
+                //create the resulting list
+                List<String> result = new ArrayList<>();
+                int i = 0;
+                while(this.rs.next()) {
+                    String resultEntry = "";
+                    try {
+                        resultEntry += this.rs.getString(i) + ";";
+                    } catch(Exception ex) {
+                        //exception will be thrown, if index is out of bounds
+                        if(resultEntry.length() > 0) {
+                            //remove the last character (;) from our result string
+                            resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
+                            result.add(resultEntry);
+                        } else {
+                            //problem detected
+
+                        }
                     }
+                    i++;
                 }
-                i++;
+                return result;
+
+            } catch (SQLException ex) {
+                Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
             }
-            return result;
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
             return null;
         }
     }
