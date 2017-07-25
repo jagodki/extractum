@@ -15,6 +15,7 @@
  */
 package gui;
 
+import exporting.ExportTableModel;
 import java.awt.Window;
 import java.lang.reflect.Method;
 import java.util.logging.Level;
@@ -143,17 +144,7 @@ public class Extractum extends javax.swing.JFrame {
 
         jPanelExport.setPreferredSize(new java.awt.Dimension(100, 132));
 
-        jTableImportExport.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
+        jTableImportExport.setModel(new ExportTableModel());
         jScrollPane4.setViewportView(jTableImportExport);
 
         jTextAreaExportSql.setColumns(20);
