@@ -15,6 +15,7 @@
  */
 package database;
 
+import Utilities.LogArea;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -131,16 +132,15 @@ public class Database {
     /**
      * This function try the connection with a database represented by the
      * member variable of the current object.
+     * @param log an object for logging and displaying information to the user
      * @return true whether the connection was successfull, otherwise false
      */
-    public boolean connectToPostgresDatabase() {
+    public boolean connectToPostgresDatabase(LogArea log) {
         //check, whether the postgres driver is availlable
         try {
             Class.forName("org.postgresql.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("Where is your PostgreSQL JDBC Driver? "
-                            + "Include in your library path!");
-            e.printStackTrace();
+            log.log(LogArea.ERROR, "cannot find PostgreSQL JDBC driver", e);
             return false;
         }
         
@@ -149,11 +149,11 @@ public class Database {
             this.connection = DriverManager.getConnection(
                     "jdbc:postgresql://" + this.host + ":" + this.port, this.user, this.pw);
         } catch (SQLException e) {
-                System.out.println("Connection Failed! Check output console");
-                e.printStackTrace();
-                return false;
+            log.log(LogArea.ERROR, "connection to database failed", e);
+            return false;
         }
         
+        log.log(LogArea.INFO, "successfully connected to database", null);
         return true;
     }
     

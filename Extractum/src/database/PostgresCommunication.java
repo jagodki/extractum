@@ -15,13 +15,12 @@
  */
 package database;
 
+import Utilities.LogArea;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This class provides funcionalities for the communication with a PostgreSQL-Server, 
@@ -72,9 +71,10 @@ public class PostgresCommunication {
      * @param colTypes an array of column types for parsing the datasets in the correct type
      * @param datasets an array of comma-separeted datasets
      * @param template the template of the insert-statement
+     * @param log an object for logging and displaying information to the user
      * @return true whether insert was correct, otherwise false
      */
-    public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets, String template) {
+    public boolean insertData(String table, String[] columns, String[] colTypes, String[] datasets, String template, LogArea log) {
         //create statement
         String columnsString = "";
         for(int i = 0; i < columns.length; i++) {
@@ -101,7 +101,7 @@ public class PostgresCommunication {
             st.executeUpdate(sqlCommand);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            log.log(LogArea.ERROR, "sql command failed", ex);
             return false;
         }
     }
@@ -112,9 +112,10 @@ public class PostgresCommunication {
      * @param columnNames an array of column names for the new table
      * @param colTypes an array of column types for the new table
      * @param template a template of the update-SQL-command
+     * @param log an object for logging and displaying information to the user
      * @return true whether insert was correct, otherwise false
      */
-    public boolean createTable(String tableName, String[] columnNames, String[] colTypes, String template) {
+    public boolean createTable(String tableName, String[] columnNames, String[] colTypes, String template, LogArea log) {
         //create the statement
         String columns = "";
         for(int i = 0; i < columnNames.length; i++) {
@@ -133,7 +134,7 @@ public class PostgresCommunication {
             st.executeUpdate(sqlCommand);
             return true;
         } catch (SQLException ex) {
-            Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+            log.log(LogArea.ERROR, "sql command failed", ex);
             return false;
         }
     }
@@ -143,9 +144,10 @@ public class PostgresCommunication {
      * This function returns [null], if an excpetion was thrown or if the sql statement
      * does not start with the key word <i>select</i>.
      * @param sqlCommand the sql statement
+     * @param log an object for logging and displaying information to the user
      * @return the result set as a List of Strings, each entry contains a comma-separeted dataset
      */
-    public List<String> selectData(String sqlCommand) {
+    public List<String> selectData(String sqlCommand, LogArea log) {
         if(sqlCommand.startsWith("select")) {
             //execute the statement
             try {
@@ -154,28 +156,22 @@ public class PostgresCommunication {
 
                 //create the resulting list
                 List<String> result = new ArrayList<>();
-                int i = 0;
+                int columnCount = this.rs.getMetaData().getColumnCount();
                 while(this.rs.next()) {
                     String resultEntry = "";
-                    try {
+                    for(int i = 0; i < columnCount; i++) {
                         resultEntry += this.rs.getString(i) + ";";
-                    } catch(Exception ex) {
-                        //exception will be thrown, if index is out of bounds
-                        if(resultEntry.length() > 0) {
-                            //remove the last character (;) from our result string
-                            resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
-                            result.add(resultEntry);
-                        } else {
-                            //problem detected
-
-                        }
                     }
-                    i++;
+                    //remove the last character (;) from our result string
+                    if(resultEntry.length() > 1) {
+                        resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
+                    }
+                    result.add(resultEntry);
                 }
                 return result;
 
             } catch (SQLException ex) {
-                Logger.getLogger(PostgresCommunication.class.getName()).log(Level.SEVERE, null, ex);
+                log.log(LogArea.ERROR, "sql command failed", ex);
                 return null;
             }
         } else {
@@ -183,21 +179,43 @@ public class PostgresCommunication {
         }
     }
 
-    public List<String> selectColumnNamesTypesOfTable(String table, String template) {
+    /**
+     * This function returns the names and types of all columns of on table.
+     * @param table the name of the table as String
+     * @param template the correct template for the sql command
+     * @param log an object for logging information
+     * @return the result of the commando as a list of comma separeted Strings
+     */
+    public List<String> selectColumnNamesTypesOfTable(String table, String template, LogArea log) {
         String sqlStatement = template.replace("&table&", table);
-        List<String> result = this.selectData(sqlStatement);
+        List<String> result = this.selectData(sqlStatement, log);
         return result;
     }
     
-    public List<String> selectColumnsOfConstraint(String table, String constraint, String template) {
+    /**
+     * This function returns the columns, which are part of a contraint.
+     * @param table the name of the table as String
+     * @param constraint the name of the constraint as String
+     * @param template the correct template for the sql command
+     * @param log an object for logging information
+     * @return the result of the commando as a list of comma separeted Strings
+     */
+    public List<String> selectColumnsOfConstraint(String table, String constraint, String template, LogArea log) {
         String sqlStatement = template.replace("&table&", table).replace("&constraint&", constraint);
-        List<String> result = this.selectData(sqlStatement);
+        List<String> result = this.selectData(sqlStatement, log);
         return result;
     }
     
-    public List<String> selectTablesOfSchema(String schema, String template) {
+    /**
+     * This function returns all table names of a schema.
+     * @param schema the name of the schema as String
+     * @param template the correct template for the sql command
+     * @param log an object for logging information
+     * @return the result of the commando as a list of comma separeted Strings
+     */
+    public List<String> selectTablesOfSchema(String schema, String template, LogArea log) {
         String sqlStatement = template.replace("&schema&", schema);
-        List<String> result = this.selectData(sqlStatement);
+        List<String> result = this.selectData(sqlStatement, log);
         return result;
     }
     
