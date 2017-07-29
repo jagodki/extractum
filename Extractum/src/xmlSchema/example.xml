@@ -19,7 +19,7 @@
 			<foreignKey column="id2" reftable="test2"/>
 		</foreignKeys>
 		<path>
-			/Users/Christoph/Desktop/test.json
+			/Users/Christoph/Desktop/test.extractum
 		</path>
 	</table>
 	<table name="test2">
@@ -37,7 +37,7 @@
 		</primaryKeys>
 		<foreignKeys/>
 		<path>
-			/Users/Christoph/Desktop/test.json
+			/Users/Christoph/Desktop/test2.extractum
 		</path>
 	</table>
 </database>
