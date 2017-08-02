@@ -16,12 +16,17 @@
 package exporting;
 
 import Utilities.LogArea;
+import extractumXml.DatabaseType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 /**
  *
@@ -52,13 +57,9 @@ public class ExportHandler {
         pb.setValue(0);
         
         //check, whether a file with the specified path exists already and delete it if necessary
-        File file = new File(path);
-        if (file.exists()) {
-            boolean deleteOfFile = file.delete();
-            if(!deleteOfFile) {
-                log.log(LogArea.WARNING, "file already exists and not possible to remove it", null);
-                return false;
-            }
+        boolean deleteFile = this.deleteExistingFile(path, log);
+        if(!deleteFile) {
+            return false;
         }
         
         //add each list entry to the specified file
@@ -69,9 +70,60 @@ public class ExportHandler {
             }
         } catch(IOException ex) {
             log.log(LogArea.ERROR, "cannot write data to file", ex);
+            JOptionPane.showMessageDialog(null,
+                        "Cannot write data to the export file - see log window for further information.",
+                        "Export Data",
+                        JOptionPane.ERROR_MESSAGE);
             return false;
         }
         
+        return true;
+    }
+    
+    private boolean deleteExistingFile(String path, LogArea log) {
+        //check, whether a file with the specified path exists already and delete it if necessary
+        File file = new File(path);
+        if (file.exists()) {
+            boolean deleteOfFile = file.delete();
+            if(!deleteOfFile) {
+                log.log(LogArea.WARNING, "file already exists and not possible to remove it", null);
+                JOptionPane.showMessageDialog(null,
+                        "Already existing file cannot removed - see log window for further information.",
+                        "Export Data",
+                        JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public boolean exportToXml(String path, DatabaseType rootObject, LogArea log) {
+        String absolutePath = path + File.pathSeparator + "config.xml";
+        
+        //check, whether a file with the specified path exists already and delete it if necessary
+        boolean deleteFile = this.deleteExistingFile(absolutePath, log);
+        if(!deleteFile) {
+            return false;
+        }
+        
+        File outputFile = new File(new File(absolutePath).getAbsolutePath());
+        try {
+            //init components
+            JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            
+            //pretty print
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+            //export
+            jaxbMarshaller.marshal(rootObject, outputFile);
+        } catch (JAXBException ex) {
+            log.log(LogArea.ERROR, "JAXB-configuration failed - unable to marshall java objects", ex);
+            JOptionPane.showMessageDialog(null,
+                    "Export of XML-file failed - see log window for further information.",
+                    "Export Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
         return true;
     }
     

@@ -21,7 +21,7 @@
  * limitations under the License.
  */
 
-package generated;
+package extractumXml;
 
 import java.io.Serializable;
 import java.util.ArrayList;

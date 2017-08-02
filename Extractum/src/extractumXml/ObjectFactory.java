@@ -21,7 +21,7 @@
  * limitations under the License.
  */
 
-package generated;
+package extractumXml;
 
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
