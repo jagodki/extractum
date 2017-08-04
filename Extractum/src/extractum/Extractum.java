@@ -15,17 +15,32 @@
  */
 package extractum;
 
+import Utilities.LogArea;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
 /**
  *
  * @author Christoph
  */
 public class Extractum {
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
+    public Extractum() {
+    }
+    
+    public String getSqlTemplate(String name, LogArea log) {
+        String result = "";
+        
+        try {
+            List<String> content = Files.readAllLines(Paths.get(name));
+            result = content.stream().map((line) -> line).reduce(result, String::concat);
+        } catch (IOException ex) {
+            log.log(LogArea.ERROR, "cannot import SQL-template", ex);
+        }
+        
+        return result;
     }
     
 }

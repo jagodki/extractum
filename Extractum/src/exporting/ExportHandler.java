@@ -16,7 +16,10 @@
 package exporting;
 
 import Utilities.LogArea;
+import database.PostgresCommunication;
 import extractumXml.DatabaseType;
+import extractumXml.TableType;
+import extractum.Extractum;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -125,6 +128,23 @@ public class ExportHandler {
             return false;
         }
         return true;
+    }
+    
+    public DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent, PostgresCommunication pgc, LogArea log, Extractum ex) {
+        DatabaseType dbt = new DatabaseType();
+        
+        int rowCount = tableContent.getRowCount();
+        int columnCount = tableContent.getColumnCount();
+        
+        for(int i = 0; i < rowCount; i++) {
+            TableType tt = new TableType();
+            
+            List<String> pk = pgc.selectColumnsOfConstraint(tableContent.getValueAt(i, 0).toString(),
+                    "PRIMARY KEY", ex.getSqlTemplate("constraint.sql", log), log);
+            
+            tt.setName(tableContent.getValueAt(i, 0).toString());
+        }
+        
     }
     
 }
