@@ -20,6 +20,8 @@ import database.PostgresCommunication;
 import extractumXml.DatabaseType;
 import extractumXml.TableType;
 import extractum.Extractum;
+import extractumXml.PrimaryKeyType;
+import extractumXml.PrimaryKeysType;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -83,6 +85,17 @@ public class ExportHandler {
         return true;
     }
     
+    /**
+     * This function delete an existing file.
+     * <p>If the file can be deleted successfully, the function returns <code>true</code>.
+     * <p>Whether it is not possible to delete the file, an exception will be send to
+     * a log object for further information.
+     * <p>Whether a file with the specified name does not exist, the function will
+     * return <code>true</code> and an information will be send to the log object.
+     * @param path the absolute path as String of the file
+     * @param log an object for logging information
+     * @return true whether the file was deleted successfully, otherwise false
+     */
     private boolean deleteExistingFile(String path, LogArea log) {
         //check, whether a file with the specified path exists already and delete it if necessary
         File file = new File(path);
@@ -96,10 +109,19 @@ public class ExportHandler {
                         JOptionPane.ERROR_MESSAGE);
                 return false;
             }
+        } else {
+            log.log(LogArea.INFO, "a file with the specified path does not exist", null);
         }
         return true;
     }
     
+    /**
+     * This function exports a given JAXB-root element to an XML file.
+     * @param path the absolute path as String as destination of the export
+     * @param rootObject the JAXB-root element
+     * @param log an object for logging information
+     * @return true whether export was successfull, otherwise false
+     */
     public boolean exportToXml(String path, DatabaseType rootObject, LogArea log) {
         String absolutePath = path + File.pathSeparator + "config.xml";
         
@@ -130,21 +152,52 @@ public class ExportHandler {
         return true;
     }
     
-    public DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent, PostgresCommunication pgc, LogArea log, Extractum ex) {
+    public DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
+                                                         PostgresCommunication pgc,
+                                                         LogArea log, Extractum ex,
+                                                         String sqlStatement,
+                                                         String destinationDirectory) {
         DatabaseType dbt = new DatabaseType();
         
         int rowCount = tableContent.getRowCount();
-        int columnCount = tableContent.getColumnCount();
         
         for(int i = 0; i < rowCount; i++) {
-            TableType tt = new TableType();
-            
-            List<String> pk = pgc.selectColumnsOfConstraint(tableContent.getValueAt(i, 0).toString(),
-                    "PRIMARY KEY", ex.getSqlTemplate("constraint.sql", log), log);
-            
-            tt.setName(tableContent.getValueAt(i, 0).toString());
+            if((Boolean) tableContent.getValueAt(i, 2)) {
+                TableType tt = new TableType();
+
+                //add primary keys
+                List<String> pk = pgc.selectColumnsOfConstraint((String) tableContent.getValueAt(i, 0),
+                        "PRIMARY KEY", ex.getSqlTemplate("constraint.sql", log), log);
+                PrimaryKeysType pkt = new PrimaryKeysType();
+                for(String entry : pk) {
+                    PrimaryKeyType primaryKey = new PrimaryKeyType();
+                    primaryKey.setColumn(entry);
+                    pkt.getPrimaryKey().add(primaryKey);
+                }
+                tt.setPrimaryKeys(pkt);
+                
+                //add the table name
+                String tableName = (String) tableContent.getValueAt(i, 0);
+                tt.setName(tableName);
+                
+                //add the sql statement
+                tt.setSql(sqlStatement);
+                
+                //add the export path
+                tt.setPath(destinationDirectory + File.pathSeparator + tableName + ".csv");
+                
+                //add all columns with their name and data type
+                List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(tableName,
+                        ex.getSqlTemplate("datatypes.sql", log), log);
+                for(String entry : columnsNamesTypes) {
+                    
+                }
+                
+                //add the current table to the root element
+                dbt.getTable().add(tt);
+            }
         }
-        
+        return dbt;
     }
     
 }
