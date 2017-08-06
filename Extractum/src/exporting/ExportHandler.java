@@ -20,6 +20,8 @@ import database.PostgresCommunication;
 import extractumXml.DatabaseType;
 import extractumXml.TableType;
 import extractum.Extractum;
+import extractumXml.ColType;
+import extractumXml.ColumnsType;
 import extractumXml.PrimaryKeyType;
 import extractumXml.PrimaryKeysType;
 import java.io.BufferedWriter;
@@ -56,7 +58,7 @@ public class ExportHandler {
      * @param pb a progress bar object to indicate the progress of the export
      * @return true whether export was successfull, otherwise false
      */
-    public boolean exportToCsv(String path, List<String> datasets, LogArea log, String columnNames, JProgressBar pb) {
+    private boolean writeDatasetsToCsv(String path, List<String> datasets, LogArea log, String columnNames, JProgressBar pb) {
         //init the progressbar
         pb.setMaximum(datasets.size());
         pb.setValue(0);
@@ -83,6 +85,10 @@ public class ExportHandler {
         }
         
         return true;
+    }
+    
+    public boolean exportToCSV() {
+        
     }
     
     /**
@@ -120,10 +126,27 @@ public class ExportHandler {
      * @param path the absolute path as String as destination of the export
      * @param rootObject the JAXB-root element
      * @param log an object for logging information
+     * @param tableContent the table of the export tab of the gui
+     * @param pgc the database communicator
+     * @param extr an Extractum object to use additional functions
+     * @param sqlStatements
+     * @param destinationDirectory
      * @return true whether export was successfull, otherwise false
      */
-    public boolean exportToXml(String path, DatabaseType rootObject, LogArea log) {
+    public boolean exportToXml(String path,
+                               DatabaseType rootObject,
+                               LogArea log,
+                               ExportTableModel
+                               tableContent,
+                               PostgresCommunication pgc,
+                               Extractum extr,
+                               String[] sqlStatements,
+                               String destinationDirectory) {
         String absolutePath = path + File.pathSeparator + "config.xml";
+        
+        //create the JAXB object
+        rootObject = this.extractConfigurationFromDatabase(tableContent,
+                pgc, log, extr, sqlStatements, absolutePath);
         
         //check, whether a file with the specified path exists already and delete it if necessary
         boolean deleteFile = this.deleteExistingFile(absolutePath, log);
@@ -152,14 +175,31 @@ public class ExportHandler {
         return true;
     }
     
-    public DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
+    /**
+     * This function extracts all needed information from the database to fill
+     * the JAXB-objects for storing extractum configuration.
+     * @param tableContent the table of the export tab of the gui
+     * @param pgc the database communicator
+     * @param log an object for logging information
+     * @param extr an Extractum object to use additional functions
+     * @param sqlStatements the sql-select-statements as an array of strings from the gui
+     * @param destinationDirectory the directory where all file have to be saved in
+     * @return 
+     */
+    private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
                                                          PostgresCommunication pgc,
-                                                         LogArea log, Extractum ex,
-                                                         String sqlStatement,
+                                                         LogArea log, Extractum extr,
+                                                         String[] sqlStatements,
                                                          String destinationDirectory) {
         DatabaseType dbt = new DatabaseType();
         
         int rowCount = tableContent.getRowCount();
+        
+        //check the count of sql statement and the row count of the table
+        if(sqlStatements.length != tableContent.getRowCount()) {
+            log.log(LogArea.WARNING, "SQL statements and table have not the same size", null);
+            return null;
+        }
         
         for(int i = 0; i < rowCount; i++) {
             if((Boolean) tableContent.getValueAt(i, 2)) {
@@ -167,7 +207,7 @@ public class ExportHandler {
 
                 //add primary keys
                 List<String> pk = pgc.selectColumnsOfConstraint((String) tableContent.getValueAt(i, 0),
-                        "PRIMARY KEY", ex.getSqlTemplate("constraint.sql", log), log);
+                        "PRIMARY KEY", extr.getSqlTemplate("constraint.sql", log), log);
                 PrimaryKeysType pkt = new PrimaryKeysType();
                 for(String entry : pk) {
                     PrimaryKeyType primaryKey = new PrimaryKeyType();
@@ -181,16 +221,20 @@ public class ExportHandler {
                 tt.setName(tableName);
                 
                 //add the sql statement
-                tt.setSql(sqlStatement);
+                tt.setSql(sqlStatements[i]);
                 
                 //add the export path
                 tt.setPath(destinationDirectory + File.pathSeparator + tableName + ".csv");
                 
                 //add all columns with their name and data type
                 List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(tableName,
-                        ex.getSqlTemplate("datatypes.sql", log), log);
+                        extr.getSqlTemplate("datatypes.sql", log), log);
+                ColumnsType ct = new ColumnsType();
                 for(String entry : columnsNamesTypes) {
-                    
+                    ColType column = new ColType();
+                    column.setName(entry.split(";")[0]);
+                    column.setType(entry.split(";")[1]);
+                    ct.getCol().add(column);
                 }
                 
                 //add the current table to the root element

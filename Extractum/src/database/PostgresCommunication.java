@@ -134,7 +134,7 @@ public class PostgresCommunication {
             st.executeUpdate(sqlCommand);
             return true;
         } catch (SQLException ex) {
-            log.log(LogArea.ERROR, "sql command failed", ex);
+            log.log(LogArea.ERROR, "sql command CREATE TABLE failed", ex);
             return false;
         }
     }
@@ -181,6 +181,8 @@ public class PostgresCommunication {
 
     /**
      * This function returns the names and types of all columns of on table.
+     * <p>The column names have index 0, the data types index 1.
+     * <br>The indices are separeted by semicolons.
      * @param table the name of the table as String
      * @param template the correct template for the sql command
      * @param log an object for logging information
