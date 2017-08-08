@@ -71,6 +71,7 @@ public class ExportHandler {
         
         //add each list entry to the specified file
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
+            bw.write(columnNames);
             for(String dataset : datasets) {
                 bw.write(dataset + "\n");
                 pb.setValue(pb.getValue() + 1);
@@ -87,8 +88,43 @@ public class ExportHandler {
         return true;
     }
     
-    public boolean exportToCSV() {
+    /**
+     * This function exports the data of a table into a CSV file
+     * <p>the CSV file will be named by the name of the table.</p>
+     * <br>The function exports all tables in the given JAXB construction.
+     * <br>The first line of each file contains the column names.
+     * @param dbt the root element of the JAXB object
+     * @param pgc an object for the communication with the PostgreSQL database
+     * @param pbMain a first progressbar
+     * @param pgSec a second progressbar
+     * @param log an object for logging information
+     * @param directory the directory, where all files should be saved in
+     */
+    public void exportToCSV(DatabaseType dbt, PostgresCommunication pgc, JProgressBar pbMain, JProgressBar pgSec, LogArea log, String directory) {
+        //init routines
+        List<TableType> tableList = dbt.getTable();
+        pbMain.setValue(0);
+        pbMain.setMaximum(tableList.size());
         
+        //iterate over the tables
+        for(TableType table : tableList) {
+            //log information
+            log.log(LogArea.INFO, "start export of table " + table.getName(), null);
+            
+            //get the column names for the heading line
+            int indexOfSelect = table.getSql().toLowerCase().indexOf("select") + 6;
+            int indexOfFrom = table.getSql().toLowerCase().indexOf("from");
+            String columns = table.getSql().toLowerCase().substring(indexOfSelect, indexOfFrom);
+            String headingline = columns.replaceAll(" ", "").replace(",", ";");
+            
+            //get all datasets of the table
+            List<String> datasets = pgc.selectData(table.getSql(), log);
+            
+            //write all the data to a file
+            this.writeDatasetsToCsv(directory + File.pathSeparator + table.getName() + ".csv", datasets, log, headingline, pgSec);
+            
+            pbMain.setValue(pbMain.getValue() + 1);
+        }
     }
     
     /**
