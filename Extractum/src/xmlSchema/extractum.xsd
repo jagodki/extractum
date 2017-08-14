@@ -35,7 +35,7 @@
   </xs:complexType>
   <xs:complexType name="foreignKeysType" mixed="true">
     <xs:sequence>
-      <xs:element type="foreignKeyType" name="foreignKey" minOccurs="0"/>
+      <xs:element type="foreignKeyType" name="foreignKey" maxOccurs="unbounded" minOccurs="0"/>
     </xs:sequence>
     <xs:attribute type="xs:string" name="name" use="optional"/>
   </xs:complexType>

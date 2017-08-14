@@ -62,10 +62,10 @@ import javax.xml.bind.annotation.XmlType;
 public class ForeignKeysType {
 
     @XmlElementRef(name = "foreignKey", type = JAXBElement.class, required = false)
-    @XmlMixed
-    protected List<Serializable> content;
     @XmlAttribute(name = "name")
     protected String name;
+    
+    protected List<ForeignKeyType> foreignKey;
 
     /**
      * Gets the value of the content property.
@@ -89,12 +89,13 @@ public class ForeignKeysType {
      * {@link JAXBElement }{@code <}{@link ForeignKeyType }{@code >}
      * 
      * 
+     * @return 
      */
-    public List<Serializable> getContent() {
-        if (content == null) {
-            content = new ArrayList<Serializable>();
+    public List<ForeignKeyType> getForeignKey() {
+        if (foreignKey == null) {
+            foreignKey = new ArrayList<>();
         }
-        return this.content;
+        return this.foreignKey;
     }
 
     /**
