@@ -55,7 +55,11 @@ public class ImportHandler {
         }
     }
     
-    public void initImportTableFromConfigFile(DatabaseType dbt, String path, LogArea log, ImportTableModel importTable, JProgressBar pb) {
+    public void initImportTableFromConfigFile(DatabaseType dbt,
+                                              String path,
+                                              LogArea log,
+                                              ImportTableModel importTable,
+                                              JProgressBar pb) {
         //import the config file
         if(dbt == null) {
             dbt = this.loadConfigFile(path, log);
@@ -98,7 +102,11 @@ public class ImportHandler {
         importTable.setLi(li);
     }
     
-    public void initExportTableFromConfigFile (DatabaseType dbt, String path, LogArea log, ExportTableModel exportTable, JProgressBar pb) {
+    public void initExportTableFromConfigFile (DatabaseType dbt,
+                                               String path,
+                                               LogArea log,
+                                               ExportTableModel exportTable,
+                                               JProgressBar pb) {
         //import the config file
         if(dbt == null) {
             dbt = this.loadConfigFile(path, log);
@@ -144,7 +152,12 @@ public class ImportHandler {
         }
     }
     
-    private void createTable(String template, String tableName, String[] columnNames, String[] colTypes, PostgresCommunication pgc, LogArea log) {
+    private void createTable(String template,
+                             String tableName,
+                             String[] columnNames,
+                             String[] colTypes,
+                             PostgresCommunication pgc,
+                             LogArea log) {
         boolean result = pgc.createTable(tableName, columnNames, colTypes, template, log);
         if(!result) {
             JOptionPane.showMessageDialog(null,
@@ -156,8 +169,52 @@ public class ImportHandler {
         }
     }
     
-    private void importDatasets() {
+    private void importDataset(String template,
+                               String tableName,
+                               String[] columnNames,
+                               String[] colTypes,
+                               String data,
+                               LogArea log,
+                               PostgresCommunication pgc) {
+        int countOfData = data.split(";").length;
         
+        if(columnNames.length != countOfData) {
+            log.log(LogArea.WARNING, "the count of column names and dataset " + data + " is unequal", null);
+        } else {
+            //convert the dataset from array of Strings to String
+            String[] dataArray = data.split(";");
+            
+            //insert the dataset
+            boolean result = pgc.insertData(tableName, columnNames, colTypes, dataArray, template, log);
+            
+            if(!result) {
+            JOptionPane.showMessageDialog(null,
+                        "Cannot insert the following dataset, please check the log for further information:\n" + data,
+                        "Import Data",
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
+    public void importData(String viewTemplate,
+                           String tableTemplate,
+                           LogArea log,
+                           JProgressBar mainPb,
+                           JProgressBar secondPb,
+                           PostgresCommunication pgc,
+                           DatabaseType dbt,
+                           List<ImportTableContent> itcList) {
+        //iterate through the table of the import tab
+        for(ImportTableContent itcRow : itcList) {
+            if(itcRow.isImportTable()) {
+                //search the current table in the XML data structur
+                for(TableType tt : dbt.getTable()) {
+                    if(tt.getName().equals(itcRow.getTableName())) {
+                        
+                    }
+                }
+            }
+        }
     }
     
 }
