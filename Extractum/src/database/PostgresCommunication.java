@@ -221,4 +221,25 @@ public class PostgresCommunication {
         return result;
     }
     
+    /**
+     * This function creates a new view.
+     * @param viewName name of the new view
+     * @param template the correct template for the sql command
+     * @param log an object for logging information
+     * @return true whether view was created, otherwise false
+     */
+    public boolean createView(String viewName, String template, LogArea log) {
+        String sqlCommand = template.replace("&name&", viewName);
+        
+        //execute the statement
+        try {
+            this.st = null;
+            this.st = this.db.getConnection().createStatement();
+            return st.execute(sqlCommand);
+        } catch (SQLException ex) {
+            log.log(LogArea.ERROR, "sql command CREATE VIEW failed", ex);
+            return false;
+        }
+    }
+    
 }

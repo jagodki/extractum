@@ -16,6 +16,9 @@
 package importing;
 
 import Utilities.LogArea;
+import database.PostgresCommunication;
+import exporting.ExportTableContent;
+import exporting.ExportTableModel;
 import extractumXml.DatabaseType;
 import extractumXml.ForeignKeyType;
 import extractumXml.PrimaryKeyType;
@@ -23,6 +26,7 @@ import extractumXml.TableType;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -94,7 +98,65 @@ public class ImportHandler {
         importTable.setLi(li);
     }
     
-    public void initExportTableFromConfigFile () {
+    public void initExportTableFromConfigFile (DatabaseType dbt, String path, LogArea log, ExportTableModel exportTable, JProgressBar pb) {
+        //import the config file
+        if(dbt == null) {
+            dbt = this.loadConfigFile(path, log);
+        }
+        
+        //preparation of the iteration
+        List<TableType> tables = dbt.getTable();
+        pb.setValue(0);
+        pb.setMaximum(tables.size());
+        List<ExportTableContent> li = new ArrayList<>();
+        
+        //iterate through the jaxb object structur and fill the table
+        for(TableType table : tables) {
+            ExportTableContent tableContent = new ExportTableContent();
+            tableContent.setTableName(table.getName());
+            tableContent.setExportTable(true);
+            
+            //PKs
+            String primaryKeys = "";
+            List<PrimaryKeyType> pkt = table.getPrimaryKeys().getPrimaryKey();
+            for(PrimaryKeyType pk : pkt) {
+                primaryKeys += pk.getColumn();
+            }
+            tableContent.setPrimaryKey(primaryKeys);
+            
+            //add the new line  the list of the table content
+            li.add(tableContent);
+            
+            pb.setValue(pb.getValue() + 1);
+        }
+        exportTable.setLi(li);
+    }
+    
+    private void createView(String template, PostgresCommunication pgc, LogArea log) {
+        boolean result = pgc.createView("extractum", template, log);
+        if(!result) {
+            JOptionPane.showMessageDialog(null,
+                        "Cannot create a new view called EXTRACTUM. Maybe it already exists. Please check the log.",
+                        "Import Data",
+                        JOptionPane.ERROR_MESSAGE);
+        } else {
+            log.log(LogArea.INFO, "new view created", null);
+        }
+    }
+    
+    private void createTable(String template, String tableName, String[] columnNames, String[] colTypes, PostgresCommunication pgc, LogArea log) {
+        boolean result = pgc.createTable(tableName, columnNames, colTypes, template, log);
+        if(!result) {
+            JOptionPane.showMessageDialog(null,
+                        "Cannot create a new table called " + tableName + ". Maybe it already exists. Please check the log.",
+                        "Import Data",
+                        JOptionPane.ERROR_MESSAGE);
+        } else {
+            log.log(LogArea.INFO, "new table " + tableName + " created", null);
+        }
+    }
+    
+    private void importDatasets() {
         
     }
     
