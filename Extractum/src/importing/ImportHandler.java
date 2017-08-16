@@ -24,7 +24,9 @@ import extractumXml.DatabaseType;
 import extractumXml.ForeignKeyType;
 import extractumXml.PrimaryKeyType;
 import extractumXml.TableType;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -238,17 +240,18 @@ public class ImportHandler {
                         //create the table
                         this.createTable(tableTemplate, importView + "." + tt.getName(), columnNames, columnTypes, pgc, log);
                         
-                        try {
-                            //read the CSV-file
-                            List<String> fileContent = Files.readAllLines(Paths.get(path + File.pathSeparator + tt.getPath()));
-                            
-                            //delete the first line, i.e. the header with the names of the columns
-                            fileContent.remove(0);
+                        try(BufferedReader br = new BufferedReader(new FileReader(path + File.pathSeparator + tt.getPath()))) {
+                            String currentLine;
+                            boolean notFirstLine = false;
                             
                             //iterate through the content of the file and import the datasets
-                            fileContent.forEach((line) -> {
-                                this.importDataset(importTemplate, importView + "." + tt.getName(), columnNames, columnTypes, line, log, pgc);
-                            });
+                            while((currentLine = br.readLine()) != null) {
+                                if(notFirstLine) {
+                                    this.importDataset(importTemplate, importView + "." + tt.getName(), columnNames, columnTypes, currentLine, log, pgc);
+                                } else {
+                                    notFirstLine = true;
+                                }
+                            }
                         } catch (IOException ex) {
                             log.log(LogArea.ERROR, "cannot read the CSV file " + path + File.pathSeparator + tt.getPath(), ex);
                             JOptionPane.showMessageDialog(null,
