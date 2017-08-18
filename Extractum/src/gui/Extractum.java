@@ -29,6 +29,9 @@ import javax.swing.UnsupportedLookAndFeelException;
  * @author Christoph
  */
 public class Extractum extends javax.swing.JFrame {
+    
+    private final LogWindow logWindow = new LogWindow();
+    private final DbConnection dbConnection = new DbConnection();
 
     /**
      * Creates new form Extractum
@@ -48,6 +51,7 @@ public class Extractum extends javax.swing.JFrame {
     private void initComponents() {
 
         buttonGroupImport = new javax.swing.ButtonGroup();
+        jMenuItem1 = new javax.swing.JMenuItem();
         jTabbedPaneMain = new javax.swing.JTabbedPane();
         jPanelImport = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -70,21 +74,32 @@ public class Extractum extends javax.swing.JFrame {
         jButtonImport = new javax.swing.JButton();
         jButtonExport = new javax.swing.JButton();
         filler2 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(5000, 0));
-        jButtonReference = new javax.swing.JButton();
-        jButtonValidateXml = new javax.swing.JButton();
-        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
-        jButtonSettings = new javax.swing.JButton();
-        jButtonInfo = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
+        filler3 = new javax.swing.Box.Filler(new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 0), new java.awt.Dimension(10, 32767));
+        jLabelCurrentDatabase = new javax.swing.JLabel();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(25, 0), new java.awt.Dimension(25, 0), new java.awt.Dimension(25, 32767));
         jMenuBar = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
+        jMenuFile = new javax.swing.JMenu();
+        jMenuItemOpenConfig = new javax.swing.JMenuItem();
+        jMenuItemImport = new javax.swing.JMenuItem();
+        jMenuItemExport = new javax.swing.JMenuItem();
+        jMenuEdit = new javax.swing.JMenu();
+        jMenuItemValidateXML = new javax.swing.JMenuItem();
+        jMenuItemDBConnection = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
+        jMenuItemSelectAll = new javax.swing.JMenuItem();
+        jMenuItemSelectReference = new javax.swing.JMenuItem();
+        jMenuHelp = new javax.swing.JMenu();
+        jMenuItemLicense = new javax.swing.JMenuItem();
+        jMenuItemLog = new javax.swing.JMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Extractum");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setLocation(new java.awt.Point(100, 100));
-        setMinimumSize(new java.awt.Dimension(500, 400));
+        setMinimumSize(new java.awt.Dimension(500, 500));
 
         jTableImport.setModel(new ImportTableModel());
         jScrollPane1.setViewportView(jTableImport);
@@ -201,6 +216,11 @@ public class Extractum extends javax.swing.JFrame {
         jButtonDbConnection.setFocusable(false);
         jButtonDbConnection.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonDbConnection.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonDbConnection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDbConnectionActionPerformed(evt);
+            }
+        });
         jToolBar.add(jButtonDbConnection);
 
         jButtonLoad.setText("Load");
@@ -227,40 +247,58 @@ public class Extractum extends javax.swing.JFrame {
         jToolBar.add(jButtonExport);
         jToolBar.add(filler2);
 
-        jButtonReference.setText("Select reference");
-        jButtonReference.setFocusable(false);
-        jButtonReference.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonReference.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar.add(jButtonReference);
+        jLabel2.setText("selected database:");
+        jToolBar.add(jLabel2);
+        jToolBar.add(filler3);
 
-        jButtonValidateXml.setText("Validate XML");
-        jButtonValidateXml.setFocusable(false);
-        jButtonValidateXml.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonValidateXml.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar.add(jButtonValidateXml);
+        jLabelCurrentDatabase.setText("---");
+        jToolBar.add(jLabelCurrentDatabase);
         jToolBar.add(filler1);
 
-        jButtonSettings.setText("Settings");
-        jButtonSettings.setFocusable(false);
-        jButtonSettings.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonSettings.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar.add(jButtonSettings);
+        jMenuFile.setText("File");
 
-        jButtonInfo.setText("Info");
-        jButtonInfo.setFocusable(false);
-        jButtonInfo.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButtonInfo.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar.add(jButtonInfo);
+        jMenuItemOpenConfig.setText("Open Configuration");
+        jMenuFile.add(jMenuItemOpenConfig);
 
-        jMenu1.setText("File");
+        jMenuItemImport.setText("Import Data");
+        jMenuFile.add(jMenuItemImport);
 
-        jMenuItem1.setText("jMenuItem1");
-        jMenu1.add(jMenuItem1);
+        jMenuItemExport.setText("Export Data");
+        jMenuFile.add(jMenuItemExport);
 
-        jMenuBar.add(jMenu1);
+        jMenuBar.add(jMenuFile);
 
-        jMenu2.setText("Edit");
-        jMenuBar.add(jMenu2);
+        jMenuEdit.setText("Edit");
+
+        jMenuItemValidateXML.setText("Validate XML");
+        jMenuEdit.add(jMenuItemValidateXML);
+
+        jMenuItemDBConnection.setText("Open Database Configuration");
+        jMenuEdit.add(jMenuItemDBConnection);
+        jMenuEdit.add(jSeparator1);
+
+        jMenuItemSelectAll.setText("Select All");
+        jMenuEdit.add(jMenuItemSelectAll);
+
+        jMenuItemSelectReference.setText("Select Referenced Tables");
+        jMenuEdit.add(jMenuItemSelectReference);
+
+        jMenuBar.add(jMenuEdit);
+
+        jMenuHelp.setText("Help");
+
+        jMenuItemLicense.setText("Show License");
+        jMenuHelp.add(jMenuItemLicense);
+
+        jMenuItemLog.setText("Show Log");
+        jMenuItemLog.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemLogActionPerformed(evt);
+            }
+        });
+        jMenuHelp.add(jMenuItemLog);
+
+        jMenuBar.add(jMenuHelp);
 
         setJMenuBar(jMenuBar);
 
@@ -290,6 +328,20 @@ public class Extractum extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonImportActionPerformed
 
+    private void jMenuItemLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLogActionPerformed
+        //edit the position of the window, so it is displayed at the middle of the main window
+        this.logWindow.setLocation(this.getX() + this.getWidth() / 2 - this.logWindow.getWidth() / 2,
+                                   this.getY() + this.getHeight() / 2 - this.logWindow.getHeight() / 2);
+        this.logWindow.setVisible(true);
+    }//GEN-LAST:event_jMenuItemLogActionPerformed
+
+    private void jButtonDbConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDbConnectionActionPerformed
+        //edit the position of the window, so it is displayed at the middle of the main window
+        this.dbConnection.setLocation(this.getX() + this.getWidth() / 2 - this.dbConnection.getWidth() / 2,
+                                      this.getY() + this.getHeight() / 2 - this.dbConnection.getHeight() / 2);
+        this.dbConnection.setVisible(true);
+    }//GEN-LAST:event_jButtonDbConnectionActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -314,7 +366,7 @@ public class Extractum extends javax.swing.JFrame {
     }
     
     @SuppressWarnings({"unchecked", "rawtypes"})
-    public void enableOSXFullscreen(Window window) {
+    private void enableOSXFullscreen(Window window) {
         String os = System.getProperty("os.name", "generic").toLowerCase();
         if ((os.contains("mac")) || (os.contains("darwin"))) {        
             try {
@@ -332,18 +384,27 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroupImport;
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
+    private javax.swing.Box.Filler filler3;
     private javax.swing.JButton jButtonDbConnection;
     private javax.swing.JButton jButtonExport;
     private javax.swing.JButton jButtonImport;
-    private javax.swing.JButton jButtonInfo;
     private javax.swing.JButton jButtonLoad;
-    private javax.swing.JButton jButtonReference;
-    private javax.swing.JButton jButtonSettings;
-    private javax.swing.JButton jButtonValidateXml;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabelCurrentDatabase;
     private javax.swing.JMenuBar jMenuBar;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItemDBConnection;
+    private javax.swing.JMenuItem jMenuItemExport;
+    private javax.swing.JMenuItem jMenuItemImport;
+    private javax.swing.JMenuItem jMenuItemLicense;
+    private javax.swing.JMenuItem jMenuItemLog;
+    private javax.swing.JMenuItem jMenuItemOpenConfig;
+    private javax.swing.JMenuItem jMenuItemSelectAll;
+    private javax.swing.JMenuItem jMenuItemSelectReference;
+    private javax.swing.JMenuItem jMenuItemValidateXML;
     private javax.swing.JPanel jPanelExport;
     private javax.swing.JPanel jPanelImport;
     private javax.swing.JPanel jPanelStatistics;
@@ -353,6 +414,7 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPaneMain;
     private javax.swing.JTable jTableExportSchema;
     private javax.swing.JTable jTableImport;
