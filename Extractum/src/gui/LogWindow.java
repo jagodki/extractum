@@ -15,6 +15,9 @@
  */
 package gui;
 
+import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
+
 /**
  *
  * @author Christoph
@@ -124,6 +127,20 @@ public class LogWindow extends javax.swing.JFrame {
             }
         });
     }
+
+    protected JProgressBar getjProgressBarMain() {
+        return jProgressBarMain;
+    }
+
+    protected JProgressBar getjProgressBarMinor() {
+        return jProgressBarMinor;
+    }
+
+    protected JTextArea getjTextAreaLog() {
+        return jTextAreaLog;
+    }
+    
+    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;

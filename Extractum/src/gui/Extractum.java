@@ -15,6 +15,7 @@
  */
 package gui;
 
+import Utilities.LogArea;
 import exporting.ExportTableModel;
 import importing.ImportTableModel;
 import java.awt.Window;
@@ -30,13 +31,17 @@ import javax.swing.UnsupportedLookAndFeelException;
  */
 public class Extractum extends javax.swing.JFrame {
     
-    private final LogWindow logWindow = new LogWindow();
-    private final DbConnection dbConnection = new DbConnection();
+    private final LogArea log;
+    private final LogWindow logWindow;
+    private final DbConnection dbConnection;
 
     /**
      * Creates new form Extractum
      */
     public Extractum() {
+        this.logWindow = new LogWindow();
+        this.log = new LogArea(this.logWindow.getjTextAreaLog());
+        this.dbConnection = new DbConnection(this.log);
         enableOSXFullscreen(this);
         initComponents();
     }
@@ -274,6 +279,11 @@ public class Extractum extends javax.swing.JFrame {
         jMenuEdit.add(jMenuItemValidateXML);
 
         jMenuItemDBConnection.setText("Open Database Configuration");
+        jMenuItemDBConnection.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemDBConnectionActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemDBConnection);
         jMenuEdit.add(jSeparator1);
 
@@ -341,6 +351,10 @@ public class Extractum extends javax.swing.JFrame {
                                       this.getY() + this.getHeight() / 2 - this.dbConnection.getHeight() / 2);
         this.dbConnection.setVisible(true);
     }//GEN-LAST:event_jButtonDbConnectionActionPerformed
+
+    private void jMenuItemDBConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDBConnectionActionPerformed
+        this.jButtonDbConnectionActionPerformed(evt);
+    }//GEN-LAST:event_jMenuItemDBConnectionActionPerformed
 
     /**
      * @param args the command line arguments

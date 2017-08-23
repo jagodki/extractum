@@ -15,16 +15,23 @@
  */
 package gui;
 
+import Utilities.LogArea;
+import database.Database;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Christoph
  */
 public class DbConnection extends javax.swing.JFrame {
 
+    private LogArea log;
+    
     /**
      * Creates new form DbConnection
      */
-    public DbConnection() {
+    public DbConnection(LogArea log) {
+        this.log = log;
         initComponents();
     }
 
@@ -54,7 +61,6 @@ public class DbConnection extends javax.swing.JFrame {
         jSeparator2 = new javax.swing.JSeparator();
 
         setTitle("DB Connection");
-        setAlwaysOnTop(true);
         setLocation(new java.awt.Point(0, 0));
         setResizable(false);
 
@@ -168,12 +174,36 @@ public class DbConnection extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This method saves all information except the password.
+     * @param evt 
+     */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
+    /**
+     * This method creates a new DB object with the given parametres in the GUI.
+     * @param evt 
+     */
     private void jButtonCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckActionPerformed
-        // TODO add your handling code here:
+        Database db = new Database(jTextFieldHost.getText(),
+                                   jTextFieldPort.getText(),
+                                   jTextFieldDb.getText(),
+                                   jTextFieldUser.getText(),
+                                   new String(jPasswordFieldPw.getPassword()));
+        boolean successfullConnection = db.connectToPostgresDatabase(log);
+        if(successfullConnection) {
+            JOptionPane.showMessageDialog(null,
+                "Success!",
+                "Database Connection",
+                JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null,
+                "Connection to Database not possible! Please read the log for further information.",
+                "Database Connection",
+                JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonCheckActionPerformed
 
     /**
@@ -205,8 +235,16 @@ public class DbConnection extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
-            new DbConnection().setVisible(true);
+            new DbConnection(null).setVisible(true);
         });
+    }
+    
+    private void saveSettings() {
+        
+    }
+    
+    private void readSettings() {
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
