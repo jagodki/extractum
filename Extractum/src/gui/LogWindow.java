@@ -15,20 +15,21 @@
  */
 package gui;
 
-import javax.swing.JProgressBar;
-import javax.swing.JTextArea;
+import java.awt.event.KeyEvent;
 
 /**
  *
  * @author Christoph
  */
-public class LogWindow extends javax.swing.JFrame {
+public class LogWindow extends javax.swing.JDialog {
 
     /**
-     * Creates new form LogWindow
+     * Creates new form LogWindow2
      */
-    public LogWindow() {
+    public LogWindow(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
+        this.setFocusable(true);
     }
 
     /**
@@ -46,9 +47,19 @@ public class LogWindow extends javax.swing.JFrame {
         jProgressBarMain = new javax.swing.JProgressBar();
         jProgressBarMinor = new javax.swing.JProgressBar();
 
-        setTitle("Log Window");
-        setAlwaysOnTop(true);
-        setLocation(new java.awt.Point(0, 0));
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("log window");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
+
+        jPanel1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jPanel1KeyPressed(evt);
+            }
+        });
 
         jTextAreaLog.setEditable(false);
         jTextAreaLog.setColumns(20);
@@ -62,7 +73,7 @@ public class LogWindow extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 569, Short.MAX_VALUE)
                     .addComponent(jProgressBarMain, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jProgressBarMinor, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
@@ -71,7 +82,7 @@ public class LogWindow extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 273, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBarMinor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -83,7 +94,9 @@ public class LogWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(0, 0, 0))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -92,6 +105,20 @@ public class LogWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        //hide the dialog wether ESC was pressed
+        if(evt.getKeyCode() == 27) {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_formKeyPressed
+
+    private void jPanel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyPressed
+        //hide the dialog wether ESC was pressed
+        if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_jPanel1KeyPressed
 
     /**
      * @param args the command line arguments
@@ -119,28 +146,22 @@ public class LogWindow extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(LogWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        //</editor-fold>
 
-        /* Create and display the form */
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LogWindow().setVisible(true);
+                LogWindow dialog = new LogWindow(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
-
-    protected JProgressBar getjProgressBarMain() {
-        return jProgressBarMain;
-    }
-
-    protected JProgressBar getjProgressBarMinor() {
-        return jProgressBarMinor;
-    }
-
-    protected JTextArea getjTextAreaLog() {
-        return jTextAreaLog;
-    }
-    
-    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel jPanel1;
@@ -149,4 +170,16 @@ public class LogWindow extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea jTextAreaLog;
     // End of variables declaration//GEN-END:variables
+
+    public javax.swing.JProgressBar getjProgressBarMain() {
+        return jProgressBarMain;
+    }
+
+    public javax.swing.JProgressBar getjProgressBarMinor() {
+        return jProgressBarMinor;
+    }
+
+    public javax.swing.JTextArea getjTextAreaLog() {
+        return jTextAreaLog;
+    }
 }

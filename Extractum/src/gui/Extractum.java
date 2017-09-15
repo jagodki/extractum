@@ -19,9 +19,13 @@ import Utilities.LogArea;
 import exporting.ExportTableModel;
 import importing.ImportTableModel;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
@@ -33,17 +37,37 @@ public class Extractum extends javax.swing.JFrame {
     
     private final LogArea log;
     private final LogWindow logWindow;
-    private final DbConnection dbConnection;
+    private final DatabaseSettings dbSettings;
+    private Properties settings;
 
     /**
      * Creates new form Extractum
      */
     public Extractum() {
-        this.logWindow = new LogWindow();
+        this.logWindow = new LogWindow(this, true);
         this.log = new LogArea(this.logWindow.getjTextAreaLog());
-        this.dbConnection = new DbConnection(this.log);
+        this.settings = new Properties();
+        this.setFocusable(true);
+        
+        //import the settings file from class path
+        try {
+            this.settings.load(getClass().getClassLoader().getResourceAsStream("gui/settings.properties"));
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,
+                "Not able to load settings file. Please reade the log for further information.",
+                "Settings",
+                JOptionPane.ERROR_MESSAGE);
+            this.log.log(LogArea.ERROR, "cannot load settings file", ex);
+        }
+        
+        //init the next window
+        this.dbSettings = new DatabaseSettings(this, true, this.log, this.settings);
+        
         enableOSXFullscreen(this);
         initComponents();
+        
+        //update components from settings
+        this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
     }
 
     /**
@@ -347,9 +371,9 @@ public class Extractum extends javax.swing.JFrame {
 
     private void jButtonDbConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDbConnectionActionPerformed
         //edit the position of the window, so it is displayed at the middle of the main window
-        this.dbConnection.setLocation(this.getX() + this.getWidth() / 2 - this.dbConnection.getWidth() / 2,
-                                      this.getY() + this.getHeight() / 2 - this.dbConnection.getHeight() / 2);
-        this.dbConnection.setVisible(true);
+        this.dbSettings.setLocation(this.getX() + this.getWidth() / 2 - this.dbSettings.getWidth() / 2,
+                                      this.getY() + this.getHeight() / 2 - this.dbSettings.getHeight() / 2);
+        this.dbSettings.setVisible(true);
     }//GEN-LAST:event_jButtonDbConnectionActionPerformed
 
     private void jMenuItemDBConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDBConnectionActionPerformed

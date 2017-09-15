@@ -16,6 +16,7 @@
 package gui;
 
 import Utilities.LogArea;
+import java.util.Properties;
 import database.Database;
 import javax.swing.JOptionPane;
 
@@ -23,16 +24,26 @@ import javax.swing.JOptionPane;
  *
  * @author Christoph
  */
-public class DbConnection extends javax.swing.JFrame {
+public class DatabaseSettings extends javax.swing.JDialog {
 
     private LogArea log;
+    private Properties settings;
     
     /**
-     * Creates new form DbConnection
+     * Creates new form DatabaseSettings
      */
-    public DbConnection(LogArea log) {
-        this.log = log;
+    public DatabaseSettings(java.awt.Frame parent, boolean modal, LogArea log, Properties settings) {
+        super(parent, modal);
         initComponents();
+        this.setFocusable(true);
+        this.settings = settings;
+        this.log = log;
+        
+        //init the text and password fields
+        this.jTextFieldDb.setText(this.settings.getProperty("database"));
+        this.jTextFieldPort.setText(this.settings.getProperty("port"));
+        this.jTextFieldHost.setText(this.settings.getProperty("host"));
+        this.jTextFieldUser.setText(this.settings.getProperty("user"));
     }
 
     /**
@@ -60,9 +71,13 @@ public class DbConnection extends javax.swing.JFrame {
         jPasswordFieldPw = new javax.swing.JPasswordField();
         jSeparator2 = new javax.swing.JSeparator();
 
-        setTitle("DB Connection");
-        setLocation(new java.awt.Point(0, 0));
-        setResizable(false);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("database settings");
+        addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                formKeyPressed(evt);
+            }
+        });
 
         jLabelHost.setText("Host:");
 
@@ -174,24 +189,12 @@ public class DbConnection extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    /**
-     * This method saves all information except the password.
-     * @param evt 
-     */
-    private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonSaveActionPerformed
-
-    /**
-     * This method creates a new DB object with the given parametres in the GUI.
-     * @param evt 
-     */
     private void jButtonCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckActionPerformed
         Database db = new Database(jTextFieldHost.getText(),
-                                   jTextFieldPort.getText(),
-                                   jTextFieldDb.getText(),
-                                   jTextFieldUser.getText(),
-                                   new String(jPasswordFieldPw.getPassword()));
+            jTextFieldPort.getText(),
+            jTextFieldDb.getText(),
+            jTextFieldUser.getText(),
+            new String(jPasswordFieldPw.getPassword()));
         boolean successfullConnection = db.connectToPostgresDatabase(log);
         if(successfullConnection) {
             JOptionPane.showMessageDialog(null,
@@ -200,11 +203,26 @@ public class DbConnection extends javax.swing.JFrame {
                 JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(null,
-                "Connection to Database not possible! Please read the log for further information.",
+                "Connection to Database not possible!\nPlease read the log for further information.",
                 "Database Connection",
                 JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_jButtonCheckActionPerformed
+
+    private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        this.settings.setProperty("database", this.jTextFieldDb.getText());
+        this.settings.setProperty("user", this.jTextFieldUser.getText());
+        this.settings.setProperty("port", this.jTextFieldPort.getText());
+        this.settings.setProperty("host", this.jTextFieldHost.getText());
+        this.setVisible(false);
+    }//GEN-LAST:event_jButtonSaveActionPerformed
+
+    private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
+        //hide the dialog wether ESC was pressed
+        if(evt.getKeyCode() == 27) {
+            this.setVisible(false);
+        }
+    }//GEN-LAST:event_formKeyPressed
 
     /**
      * @param args the command line arguments
@@ -223,28 +241,29 @@ public class DbConnection extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(DbConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSettings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(DbConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSettings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(DbConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSettings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(DbConnection.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(DatabaseSettings.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new DbConnection(null).setVisible(true);
+        /* Create and display the dialog */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                DatabaseSettings dialog = new DatabaseSettings(new javax.swing.JFrame(), true, null, null);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
+            }
         });
-    }
-    
-    private void saveSettings() {
-        
-    }
-    
-    private void readSettings() {
-        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
