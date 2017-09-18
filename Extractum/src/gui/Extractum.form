@@ -45,7 +45,7 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemDBConnection">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Open Database Configuration"/>
+                <Property name="text" type="java.lang.String" value="Open Database Connection"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemDBConnectionActionPerformed"/>

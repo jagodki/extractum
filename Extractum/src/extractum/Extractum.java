@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
+import javax.swing.JProgressBar;
 
 /**
  *
@@ -41,6 +42,13 @@ public class Extractum {
         }
         
         return result;
+    }
+    
+    public void importData(LogArea log,
+                           JProgressBar pbMajor,
+                           JProgressBar pbMinor,
+                           String pathOfConfiguration) {
+        
     }
     
 }

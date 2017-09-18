@@ -19,7 +19,6 @@ import Utilities.LogArea;
 import exporting.ExportTableModel;
 import importing.ImportTableModel;
 import java.awt.Window;
-import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -39,6 +38,7 @@ public class Extractum extends javax.swing.JFrame {
     private final LogWindow logWindow;
     private final DatabaseSettings dbSettings;
     private Properties settings;
+    private Extractum controller;
 
     /**
      * Creates new form Extractum
@@ -47,6 +47,7 @@ public class Extractum extends javax.swing.JFrame {
         this.logWindow = new LogWindow(this, true);
         this.log = new LogArea(this.logWindow.getjTextAreaLog());
         this.settings = new Properties();
+        this.controller = new Extractum();
         this.setFocusable(true);
         
         //import the settings file from class path
@@ -54,7 +55,7 @@ public class Extractum extends javax.swing.JFrame {
             this.settings.load(getClass().getClassLoader().getResourceAsStream("gui/settings.properties"));
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null,
-                "Not able to load settings file. Please reade the log for further information.",
+                "Not able to load settings file.\nPlease reade the log for further information.",
                 "Settings",
                 JOptionPane.ERROR_MESSAGE);
             this.log.log(LogArea.ERROR, "cannot load settings file", ex);
@@ -302,7 +303,7 @@ public class Extractum extends javax.swing.JFrame {
         jMenuItemValidateXML.setText("Validate XML");
         jMenuEdit.add(jMenuItemValidateXML);
 
-        jMenuItemDBConnection.setText("Open Database Configuration");
+        jMenuItemDBConnection.setText("Open Database Connection");
         jMenuItemDBConnection.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemDBConnectionActionPerformed(evt);
@@ -359,9 +360,13 @@ public class Extractum extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImportActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_jButtonImportActionPerformed
 
+    /**
+     * Opens the dialog with the log area and the progressbars.
+     * @param evt the event, that started the action
+     */
     private void jMenuItemLogActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemLogActionPerformed
         //edit the position of the window, so it is displayed at the middle of the main window
         this.logWindow.setLocation(this.getX() + this.getWidth() / 2 - this.logWindow.getWidth() / 2,
@@ -369,6 +374,10 @@ public class Extractum extends javax.swing.JFrame {
         this.logWindow.setVisible(true);
     }//GEN-LAST:event_jMenuItemLogActionPerformed
 
+    /**
+     * Opens the dialog containing the parametres of the database connection.
+     * @param evt the event, that started the action
+     */
     private void jButtonDbConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDbConnectionActionPerformed
         //edit the position of the window, so it is displayed at the middle of the main window
         this.dbSettings.setLocation(this.getX() + this.getWidth() / 2 - this.dbSettings.getWidth() / 2,
@@ -376,6 +385,10 @@ public class Extractum extends javax.swing.JFrame {
         this.dbSettings.setVisible(true);
     }//GEN-LAST:event_jButtonDbConnectionActionPerformed
 
+    /**
+     * Opens the dialog containing the parametres of the database connection.
+     * @param evt the event, that started the action
+     */
     private void jMenuItemDBConnectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemDBConnectionActionPerformed
         this.jButtonDbConnectionActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemDBConnectionActionPerformed
@@ -413,6 +426,7 @@ public class Extractum extends javax.swing.JFrame {
                 Method method = util.getMethod("setWindowCanFullScreen", params);
                 method.invoke(util, window, true);
             } catch (Exception e) {
+                this.log.log(LogArea.ERROR, "Not able to load native GUI-elements of macOS", e);
                 System.out.println(e.getMessage());
             }
         }
