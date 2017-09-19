@@ -416,13 +416,25 @@ public class Extractum extends javax.swing.JFrame {
         FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
         fd.setDirectory(this.settings.getProperty("path"));
         fd.setVisible(true);
-        String path = fd.getDirectory() + File.pathSeparator + fd.getFile();
+        String path = fd.getDirectory() + File.separator + fd.getFile();
         
-        if(this.jTabbedPaneMain.getSelectedIndex() == 0) {
-            this.ec.initTable((ImportTableModel) this.jTableImport.getModel(), null, path, log, logWindow.getjProgressBarMain());
-        } else if(this.jTabbedPaneMain.getSelectedIndex() == 1) {
-            this.ec.initTable(null, (ExportTableModel) this.jTableExport.getModel(), path, log, logWindow.getjProgressBarMain());
-        }
+        new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
+        
+        String dbName = "";
+        
+        new Thread(() -> {
+            if(this.jTabbedPaneMain.getSelectedIndex() == 0) {
+                this.jLabelCurrentDatabase.setText(
+                    this.ec.initTable((ImportTableModel) this.jTableImport.getModel(), null, path, log, logWindow.getjProgressBarMain())
+                );
+            } else if(this.jTabbedPaneMain.getSelectedIndex() == 1) {
+                this.jLabelCurrentDatabase.setText(
+                     this.ec.initTable(null, (ExportTableModel) this.jTableExport.getModel(), path, log, logWindow.getjProgressBarMain())
+                );
+            }
+        }, "init table").start();
+        
+        this.log.log(LogArea.INFO, "load config file finished", null);
     }//GEN-LAST:event_jButtonLoadActionPerformed
 
     /**

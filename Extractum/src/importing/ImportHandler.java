@@ -30,12 +30,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 
 /**
@@ -43,36 +42,38 @@ import javax.xml.bind.Unmarshaller;
  * @author Christoph
  */
 public class ImportHandler {
+    
+    private DatabaseType dbt;
 
     /**
      * The constructor of this class.
      */
     public ImportHandler() {
+        this.dbt = null;
     }
     
     private DatabaseType loadConfigFile(String path, LogArea log) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            return (DatabaseType) jaxbUnmarshaller.unmarshal(new File(path));
+            return (DatabaseType) JAXBIntrospector.getValue(jaxbUnmarshaller.unmarshal(new File(path)));
         } catch (JAXBException ex) {
             log.log(LogArea.ERROR, "import of config file was not successfull", ex);
             return null;
         }
     }
     
-    public void initImportTableFromConfigFile(DatabaseType dbt,
-                                              String path,
+    public void initImportTableFromConfigFile(String path,
                                               LogArea log,
                                               ImportTableModel importTable,
                                               JProgressBar pb) {
         //import the config file
-        if(dbt == null) {
-            dbt = this.loadConfigFile(path, log);
+        if(this.dbt == null) {
+            this.dbt = this.loadConfigFile(path, log);
         }
         
         //preparation of the iteration
-        List<TableType> tables = dbt.getTable();
+        List<TableType> tables = this.dbt.getTable();
         pb.setValue(0);
         pb.setMaximum(tables.size());
         List<ImportTableContent> li = new ArrayList<>();
@@ -94,9 +95,11 @@ public class ImportHandler {
             
             //FKs
             String foreignKeys = "";
-            List<ForeignKeyType> fkt = table.getForeignKeys().getForeignKey();
-            for(ForeignKeyType fk : fkt) {
-                foreignKeys += fk.getColumn();
+            List<ForeignKeyType> fkt = table.getForeignKeys().getContent();
+            for(Object fk : fkt) {
+                if(fk.getClass() == ForeignKeyType.class) {
+                    foreignKeys += ((ForeignKeyType) fk).getColumn();
+                }
             }
             tableContent.setForeignKey(foreignKeys);
             
@@ -108,18 +111,17 @@ public class ImportHandler {
         importTable.setLi(li);
     }
     
-    public void initExportTableFromConfigFile (DatabaseType dbt,
-                                               String path,
+    public void initExportTableFromConfigFile (String path,
                                                LogArea log,
                                                ExportTableModel exportTable,
                                                JProgressBar pb) {
         //import the config file
-        if(dbt == null) {
-            dbt = this.loadConfigFile(path, log);
+        if(this.dbt == null) {
+            this.dbt = this.loadConfigFile(path, log);
         }
         
         //preparation of the iteration
-        List<TableType> tables = dbt.getTable();
+        List<TableType> tables = this.dbt.getTable();
         pb.setValue(0);
         pb.setMaximum(tables.size());
         List<ExportTableContent> li = new ArrayList<>();
@@ -256,13 +258,17 @@ public class ImportHandler {
                                                           "Error while reading a CSV file. Check the log for further information.",
                                                           "Import Data",
                                                           JOptionPane.ERROR_MESSAGE);
-                            Logger.getLogger(ImportHandler.class.getName()).log(Level.SEVERE, null, ex);
+                            log.log(LogArea.ERROR, "not able to read the selected file", ex);
                         }
                         
                     }
                 }
             }
         }
+    }
+
+    public DatabaseType getDbt() {
+        return this.dbt;
     }
     
 }

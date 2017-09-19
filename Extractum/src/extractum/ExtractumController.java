@@ -62,9 +62,8 @@ public class ExtractumController {
         
     }
     
-    public void initTable(ImportTableModel itm,
+    public String initTable(ImportTableModel itm,
                           ExportTableModel etm,
-                          //DatabaseType dbt,
                           String path,
                           LogArea log,
                           JProgressBar pb) {
@@ -72,11 +71,16 @@ public class ExtractumController {
         ImportHandler ih = new ImportHandler();
         
         //now init the table(s)
-        if(itm == null) {
-            ih.initImportTableFromConfigFile(null, path, log, itm, pb);
-        } else if(etm == null) {
-            ih.initExportTableFromConfigFile(null, path, log, etm, pb);
+        if(itm != null) {
+            ih.initImportTableFromConfigFile(path, log, itm, pb);
+            itm.fireTableDataChanged();
+            return ih.getDbt().getName();
+        } else if(etm != null) {
+            ih.initExportTableFromConfigFile(path, log, etm, pb);
+            etm.fireTableDataChanged();
+            return ih.getDbt().getName();
         }
+        return "---";
     }
     
 }

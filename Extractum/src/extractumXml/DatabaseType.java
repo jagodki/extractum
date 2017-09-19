@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -49,13 +51,17 @@ import javax.xml.bind.annotation.XmlType;
  * 
  * 
  */
+
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "databaseType", propOrder = {
     "table"
 })
+@XmlRootElement
 public class DatabaseType {
 
     protected List<TableType> table;
+    @XmlAttribute(name = "name")
+    protected String name;
 
     /**
      * Gets the value of the table property.
@@ -84,6 +90,30 @@ public class DatabaseType {
             table = new ArrayList<TableType>();
         }
         return this.table;
+    }
+    
+    /**
+     * Ruft den Wert der value-Eigenschaft ab.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Legt den Wert der value-Eigenschaft fest.
+     * 
+     * @param name
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

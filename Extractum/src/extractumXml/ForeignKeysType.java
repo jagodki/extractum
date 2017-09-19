@@ -23,7 +23,6 @@
 
 package extractumXml;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -62,10 +61,10 @@ import javax.xml.bind.annotation.XmlType;
 public class ForeignKeysType {
 
     @XmlElementRef(name = "foreignKey", type = JAXBElement.class, required = false)
+    @XmlMixed
+    protected List<ForeignKeyType> content;
     @XmlAttribute(name = "name")
     protected String name;
-    
-    protected List<ForeignKeyType> foreignKey;
 
     /**
      * Gets the value of the content property.
@@ -91,11 +90,11 @@ public class ForeignKeysType {
      * 
      * @return 
      */
-    public List<ForeignKeyType> getForeignKey() {
-        if (foreignKey == null) {
-            foreignKey = new ArrayList<>();
+    public List<ForeignKeyType> getContent() {
+        if (content == null) {
+            content = new ArrayList<>();
         }
-        return this.foreignKey;
+        return this.content;
     }
 
     /**
