@@ -16,19 +16,24 @@
 package extractum;
 
 import Utilities.LogArea;
+import exporting.ExportTableModel;
+import extractumXml.DatabaseType;
+import importing.ImportHandler;
+import importing.ImportTableModel;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import javax.swing.JProgressBar;
+import javax.swing.table.TableModel;
 
 /**
  *
  * @author Christoph
  */
-public class Extractum {
+public class ExtractumController {
 
-    public Extractum() {
+    public ExtractumController() {
     }
     
     public String getSqlTemplate(String name, LogArea log) {
@@ -48,7 +53,30 @@ public class Extractum {
                            JProgressBar pbMajor,
                            JProgressBar pbMinor,
                            String pathOfConfiguration) {
+        //create a new ImportHandler object to get access to import-functions
+        ImportHandler ih = new ImportHandler();
         
+        //parse the configuration file into the JAXB-classes
+        
+        
+        
+    }
+    
+    public void initTable(ImportTableModel itm,
+                          ExportTableModel etm,
+                          //DatabaseType dbt,
+                          String path,
+                          LogArea log,
+                          JProgressBar pb) {
+        //create a new ImportHandler object to get access to import-functions
+        ImportHandler ih = new ImportHandler();
+        
+        //now init the table(s)
+        if(itm == null) {
+            ih.initImportTableFromConfigFile(null, path, log, itm, pb);
+        } else if(etm == null) {
+            ih.initExportTableFromConfigFile(null, path, log, etm, pb);
+        }
     }
     
 }

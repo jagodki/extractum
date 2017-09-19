@@ -17,8 +17,13 @@ package gui;
 
 import Utilities.LogArea;
 import exporting.ExportTableModel;
+import extractum.ExtractumController;
 import importing.ImportTableModel;
+import java.awt.FileDialog;
+import java.awt.Frame;
 import java.awt.Window;
+import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -38,7 +43,7 @@ public class Extractum extends javax.swing.JFrame {
     private final LogWindow logWindow;
     private final DatabaseSettings dbSettings;
     private Properties settings;
-    private Extractum controller;
+    private ExtractumController ec;
 
     /**
      * Creates new form Extractum
@@ -47,7 +52,7 @@ public class Extractum extends javax.swing.JFrame {
         this.logWindow = new LogWindow(this, true);
         this.log = new LogArea(this.logWindow.getjTextAreaLog());
         this.settings = new Properties();
-        this.controller = new Extractum();
+        this.ec = new ExtractumController();
         this.setFocusable(true);
         
         //import the settings file from class path
@@ -92,7 +97,7 @@ public class Extractum extends javax.swing.JFrame {
         jTableImportSchema = new javax.swing.JTable();
         jPanelExport = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTableImportExport = new javax.swing.JTable();
+        jTableExport = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextAreaExportSql = new javax.swing.JTextArea();
         jScrollPane5 = new javax.swing.JScrollPane();
@@ -180,8 +185,8 @@ public class Extractum extends javax.swing.JFrame {
 
         jPanelExport.setPreferredSize(new java.awt.Dimension(100, 132));
 
-        jTableImportExport.setModel(new ExportTableModel());
-        jScrollPane4.setViewportView(jTableImportExport);
+        jTableExport.setModel(new ExportTableModel());
+        jScrollPane4.setViewportView(jTableExport);
 
         jTextAreaExportSql.setColumns(20);
         jTextAreaExportSql.setRows(5);
@@ -257,6 +262,11 @@ public class Extractum extends javax.swing.JFrame {
         jButtonLoad.setFocusable(false);
         jButtonLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonLoad.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonLoad.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonLoadActionPerformed(evt);
+            }
+        });
         jToolBar.add(jButtonLoad);
 
         jButtonImport.setText("Import");
@@ -291,6 +301,11 @@ public class Extractum extends javax.swing.JFrame {
         jMenuFile.add(jMenuItemOpenConfig);
 
         jMenuItemImport.setText("Import Data");
+        jMenuItemImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemImportActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuItemImport);
 
         jMenuItemExport.setText("Export Data");
@@ -393,6 +408,23 @@ public class Extractum extends javax.swing.JFrame {
         this.jButtonDbConnectionActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemDBConnectionActionPerformed
 
+    private void jMenuItemImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemImportActionPerformed
+        this.jButtonImportActionPerformed(evt);
+    }//GEN-LAST:event_jMenuItemImportActionPerformed
+
+    private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
+        FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
+        fd.setDirectory(this.settings.getProperty("path"));
+        fd.setVisible(true);
+        String path = fd.getDirectory() + File.pathSeparator + fd.getFile();
+        
+        if(this.jTabbedPaneMain.getSelectedIndex() == 0) {
+            this.ec.initTable((ImportTableModel) this.jTableImport.getModel(), null, path, log, logWindow.getjProgressBarMain());
+        } else if(this.jTabbedPaneMain.getSelectedIndex() == 1) {
+            this.ec.initTable(null, (ExportTableModel) this.jTableExport.getModel(), path, log, logWindow.getjProgressBarMain());
+        }
+    }//GEN-LAST:event_jButtonLoadActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -416,6 +448,10 @@ public class Extractum extends javax.swing.JFrame {
         });
     }
     
+    /**
+     * This function loads libraries containing GUI-elements for macOS.
+     * @param window 
+     */
     @SuppressWarnings({"unchecked", "rawtypes"})
     private void enableOSXFullscreen(Window window) {
         String os = System.getProperty("os.name", "generic").toLowerCase();
@@ -468,9 +504,9 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPaneMain;
+    private javax.swing.JTable jTableExport;
     private javax.swing.JTable jTableExportSchema;
     private javax.swing.JTable jTableImport;
-    private javax.swing.JTable jTableImportExport;
     private javax.swing.JTable jTableImportSchema;
     private javax.swing.JTextArea jTextAreaExportSql;
     private javax.swing.JTextArea jTextAreaImportSql;

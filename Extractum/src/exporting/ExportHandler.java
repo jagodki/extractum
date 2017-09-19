@@ -19,7 +19,7 @@ import Utilities.LogArea;
 import database.PostgresCommunication;
 import extractumXml.DatabaseType;
 import extractumXml.TableType;
-import extractum.Extractum;
+import extractum.ExtractumController;
 import extractumXml.ColType;
 import extractumXml.ColumnsType;
 import extractumXml.PrimaryKeyType;
@@ -164,7 +164,7 @@ public class ExportHandler {
      * @param log an object for logging information
      * @param tableContent the table of the export tab of the gui
      * @param pgc the database communicator
-     * @param extr an Extractum object to use additional functions
+     * @param extr an ExtractumController object to use additional functions
      * @param sqlStatements
      * @param destinationDirectory
      * @return true whether export was successfull, otherwise false
@@ -175,7 +175,7 @@ public class ExportHandler {
                                ExportTableModel
                                tableContent,
                                PostgresCommunication pgc,
-                               Extractum extr,
+                               ExtractumController extr,
                                String[] sqlStatements,
                                String destinationDirectory) {
         String absolutePath = path + File.pathSeparator + "config.xml";
@@ -217,14 +217,14 @@ public class ExportHandler {
      * @param tableContent the table of the export tab of the gui
      * @param pgc the database communicator
      * @param log an object for logging information
-     * @param extr an Extractum object to use additional functions
+     * @param extr an ExtractumController object to use additional functions
      * @param sqlStatements the sql-select-statements as an array of strings from the gui
      * @param destinationDirectory the directory where all file have to be saved in
      * @return 
      */
     private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
                                                          PostgresCommunication pgc,
-                                                         LogArea log, Extractum extr,
+                                                         LogArea log, ExtractumController extr,
                                                          String[] sqlStatements,
                                                          String destinationDirectory) {
         DatabaseType dbt = new DatabaseType();
