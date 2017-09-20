@@ -242,4 +242,25 @@ public class PostgresCommunication {
         }
     }
     
+    /**
+     * This function creates a new schema.
+     * @param schemaName name of the new schema
+     * @param template the correct template for the sql command
+     * @param log an object for logging information
+     * @return true whether schema was created, otherwise false
+     */
+    public boolean createSchema(String schemaName, String template, LogArea log) {
+        String sqlCommand = template.replace("&name&", schemaName);
+        
+        //execute the statement
+        try {
+            this.st = null;
+            this.st = this.db.getConnection().createStatement();
+            return st.execute(sqlCommand);
+        } catch (SQLException ex) {
+            log.log(LogArea.ERROR, "sql command CREATE SCHEMA failed", ex);
+            return false;
+        }
+    }
+    
 }

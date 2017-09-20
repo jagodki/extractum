@@ -16,6 +16,8 @@
 package extractum;
 
 import Utilities.LogArea;
+import database.Database;
+import database.PostgresCommunication;
 import exporting.ExportTableModel;
 import extractumXml.DatabaseType;
 import importing.ImportHandler;
@@ -25,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import javax.swing.JProgressBar;
-import javax.swing.table.TableModel;
 
 /**
  *
@@ -49,17 +50,37 @@ public class ExtractumController {
         return result;
     }
     
-    public void importData(LogArea log,
+    public boolean importData(LogArea log,
                            JProgressBar pbMajor,
                            JProgressBar pbMinor,
-                           String pathOfConfiguration) {
-        //create a new ImportHandler object to get access to import-functions
+                           String pathOfConfigurationFile,
+                           String directoryOfData,
+                           String host,
+                           String port,
+                           String user,
+                           String pw,
+                           ImportTableModel itm) {
+        log.log(LogArea.INFO, "start of importing data", null);
+        
+        //create a new ImportHandler object and load the config file
         ImportHandler ih = new ImportHandler();
+        ih.loadConfigFile(pathOfConfigurationFile, log);
+        log.log(LogArea.INFO, "load config file finished", null);
         
-        //parse the configuration file into the JAXB-classes
+        //init the connection to the database server
+        Database db = new Database(host, port, ih.getDbt().getName(), user, pw);
+        boolean connectionToDb = db.connectToPostgresDatabase(log);
+        if(!connectionToDb) {
+            log.log(LogArea.WARNING, "importing data cancelled", null);
+            return false;
+        }
+        PostgresCommunication pgc = new PostgresCommunication(db);
         
+        //now import the data using ImportHandler
+        ih.importData(port, port, port, log, pbMajor, pbMinor, pgc, itm, directoryOfData);
         
-        
+        log.log(LogArea.INFO, "finished importing data", null);
+        return true;
     }
     
     public String initTable(ImportTableModel itm,

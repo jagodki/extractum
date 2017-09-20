@@ -151,8 +151,8 @@
         <Container class="javax.swing.JPanel" name="jPanelImport">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Import">
-                <Property name="tabTitle" type="java.lang.String" value="Import"/>
+              <JTabbedPaneConstraints tabName="Config Viewer">
+                <Property name="tabTitle" type="java.lang.String" value="Config Viewer"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -253,8 +253,8 @@
           </Properties>
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Export">
-                <Property name="tabTitle" type="java.lang.String" value="Export"/>
+              <JTabbedPaneConstraints tabName="Export Config">
+                <Property name="tabTitle" type="java.lang.String" value="Export Config"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>
@@ -349,8 +349,8 @@
         <Container class="javax.swing.JPanel" name="jPanelStatistics">
           <Constraints>
             <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-              <JTabbedPaneConstraints tabName="Statistics">
-                <Property name="tabTitle" type="java.lang.String" value="Statistics"/>
+              <JTabbedPaneConstraints tabName="Database Statistics">
+                <Property name="tabTitle" type="java.lang.String" value="Database Statistics"/>
               </JTabbedPaneConstraints>
             </Constraint>
           </Constraints>

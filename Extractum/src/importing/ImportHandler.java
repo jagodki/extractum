@@ -52,7 +52,7 @@ public class ImportHandler {
         this.dbt = null;
     }
     
-    private DatabaseType loadConfigFile(String path, LogArea log) {
+    public DatabaseType loadConfigFile(String path, LogArea log) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
@@ -68,9 +68,8 @@ public class ImportHandler {
                                               ImportTableModel importTable,
                                               JProgressBar pb) {
         //import the config file
-        if(this.dbt == null) {
-            this.dbt = this.loadConfigFile(path, log);
-        }
+        this.dbt = null;
+        this.dbt = this.loadConfigFile(path, log);
         
         //preparation of the iteration
         List<TableType> tables = this.dbt.getTable();
@@ -116,9 +115,8 @@ public class ImportHandler {
                                                ExportTableModel exportTable,
                                                JProgressBar pb) {
         //import the config file
-        if(this.dbt == null) {
-            this.dbt = this.loadConfigFile(path, log);
-        }
+        this.dbt = null;
+        this.dbt = this.loadConfigFile(path, log);
         
         //preparation of the iteration
         List<TableType> tables = this.dbt.getTable();
@@ -157,6 +155,18 @@ public class ImportHandler {
                         JOptionPane.ERROR_MESSAGE);
         } else {
             log.log(LogArea.INFO, "new view created", null);
+        }
+    }
+    
+    private void createSchema(String schemaName, String template, PostgresCommunication pgc, LogArea log) {
+        boolean result = pgc.createView(schemaName, template, log);
+        if(!result) {
+            JOptionPane.showMessageDialog(null,
+                        "Cannot create a new schemaName called EXTRACTUM. Maybe it already exists. Please check the log and database.",
+                        "Import Data",
+                        JOptionPane.ERROR_MESSAGE);
+        } else {
+            log.log(LogArea.INFO, "new SCHEMA created", null);
         }
     }
     
@@ -204,41 +214,42 @@ public class ImportHandler {
         }
     }
     
-    public void importData(String viewTemplate,
+    public void importData(String schemaTemplate,
                            String tableTemplate,
                            String importTemplate,
                            LogArea log,
                            JProgressBar mainPb,
                            JProgressBar secondPb,
                            PostgresCommunication pgc,
-                           DatabaseType dbt,
-                           List<ImportTableContent> itcList,
+                           ImportTableModel itm,
                            String path) {
         //create the new view for importing the data
-        String importView = "extractum";
-        this.createView(importView, viewTemplate, pgc, log);
+        String importSchema = "extractum";
+        this.createSchema(importSchema, schemaTemplate, pgc, log);
         
         //iterate through the table of the import tab
-        for(ImportTableContent itcRow : itcList) {
+        int iMax = itm.getRowCount();
+        for(int i = 0; i < iMax; i++) {
+            ImportTableContent itcRow = itm.getRow(i);
             if(itcRow.isImportTable()) {
                 
                 //search the current table in the XML data structur
-                for(TableType tt : dbt.getTable()) {
+                for(TableType tt : this.dbt.getTable()) {
                     if(tt.getName().equals(itcRow.getTableName())) {
                         
                         //store the names and types of the columns in arrays of Strings
                         List<ColType> columnsList = tt.getColumns().getCol();
                         String[] columnNames = new String[columnsList.size()];
                         String[] columnTypes = new String[columnsList.size()];
-                        int i = 0;
+                        int j = 0;
                         for(ColType column : columnsList) {
-                            columnNames[i] = column.getName();
-                            columnTypes[i] = column.getType();
-                            i++;
+                            columnNames[j] = column.getName();
+                            columnTypes[j] = column.getType();
+                            j++;
                         }
                         
                         //create the table
-                        this.createTable(tableTemplate, importView + "." + tt.getName(), columnNames, columnTypes, pgc, log);
+                        this.createTable(tableTemplate, importSchema + "." + tt.getName(), columnNames, columnTypes, pgc, log);
                         
                         try(BufferedReader br = new BufferedReader(new FileReader(path + File.pathSeparator + tt.getPath()))) {
                             String currentLine;
@@ -247,7 +258,7 @@ public class ImportHandler {
                             //iterate through the content of the file and import the datasets
                             while((currentLine = br.readLine()) != null) {
                                 if(notFirstLine) {
-                                    this.importDataset(importTemplate, importView + "." + tt.getName(), columnNames, columnTypes, currentLine, log, pgc);
+                                    this.importDataset(importTemplate, importSchema + "." + tt.getName(), columnNames, columnTypes, currentLine, log, pgc);
                                 } else {
                                     notFirstLine = true;
                                 }

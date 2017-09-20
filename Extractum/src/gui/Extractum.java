@@ -181,7 +181,7 @@ public class Extractum extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTabbedPaneMain.addTab("Import", jPanelImport);
+        jTabbedPaneMain.addTab("Config Viewer", jPanelImport);
 
         jPanelExport.setPreferredSize(new java.awt.Dimension(100, 132));
 
@@ -229,7 +229,7 @@ public class Extractum extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTabbedPaneMain.addTab("Export", jPanelExport);
+        jTabbedPaneMain.addTab("Export Config", jPanelExport);
 
         javax.swing.GroupLayout jPanelStatisticsLayout = new javax.swing.GroupLayout(jPanelStatistics);
         jPanelStatistics.setLayout(jPanelStatisticsLayout);
@@ -242,7 +242,7 @@ public class Extractum extends javax.swing.JFrame {
             .addGap(0, 432, Short.MAX_VALUE)
         );
 
-        jTabbedPaneMain.addTab("Statistics", jPanelStatistics);
+        jTabbedPaneMain.addTab("Database Statistics", jPanelStatistics);
 
         jToolBar.setFloatable(false);
         jToolBar.setRollover(true);

@@ -27,12 +27,19 @@ public class ExportTableModel extends AbstractTableModel {
     
     private List<ExportTableContent> li = new ArrayList<>();
     private final String[] columnNames = {"Table", "Primary Key", "Export?"};
+    private final Class[] columnClass = {String.class, String.class, String.class, String.class, Boolean.class};
     
     public ExportTableModel() {
     }
 
     public void setLi(List<ExportTableContent> li) {
         this.li = li;
+    }
+    
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return columnClass[columnIndex];
     }
     
     @Override

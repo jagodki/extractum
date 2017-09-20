@@ -27,9 +27,16 @@ public class ImportTableModel extends AbstractTableModel {
     
     private List<ImportTableContent> li = new ArrayList<>();
     private final String[] columnNames = {"Table", "Primary Key", "Foreign Key", "Path", "Import?"};
+    private final Class[] columnClass = {String.class, String.class, String.class, String.class, Boolean.class};
     
     public void setLi(List<ImportTableContent> li) {
         this.li = li;
+    }
+    
+    @Override
+    public Class<?> getColumnClass(int columnIndex)
+    {
+        return columnClass[columnIndex];
     }
     
     @Override
@@ -63,6 +70,10 @@ public class ImportTableModel extends AbstractTableModel {
     @Override
     public String getColumnName(int columnIndex){
          return columnNames[columnIndex];
+    }
+    
+    public ImportTableContent getRow(int rowIndex) {
+        return this.li.get(rowIndex);
     }
     
 }
