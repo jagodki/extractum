@@ -18,6 +18,7 @@ package gui;
 import Utilities.LogArea;
 import java.util.Properties;
 import database.Database;
+import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
 
 /**

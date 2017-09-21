@@ -44,6 +44,10 @@ public class Extractum extends javax.swing.JFrame {
     private final DatabaseSettings dbSettings;
     private Properties settings;
     private ExtractumController ec;
+    private String importDirectory = "";
+    private String importFile = "";
+    private String exportDirectory = "";
+    private String exportFile = "";
 
     /**
      * Creates new form Extractum
@@ -297,9 +301,16 @@ public class Extractum extends javax.swing.JFrame {
 
         jMenuFile.setText("File");
 
+        jMenuItemOpenConfig.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemOpenConfig.setText("Open Configuration");
+        jMenuItemOpenConfig.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemOpenConfigActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuItemOpenConfig);
 
+        jMenuItemImport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_I, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemImport.setText("Import Data");
         jMenuItemImport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -375,7 +386,25 @@ public class Extractum extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImportActionPerformed
-        
+        if(this.importDirectory.equals("") || this.importFile.equals("")) {
+            JOptionPane.showMessageDialog(null,
+                        "Configuration file was not loaded before.",
+                        "Import Data",
+                        JOptionPane.ERROR_MESSAGE);
+        } else {
+            new Thread(() -> {
+                ec.importData(log,
+                              this.logWindow.getjProgressBarMain(),
+                              this.logWindow.getjProgressBarMinor(),
+                              "",
+                              "",
+                              this.settings.getProperty("host"),
+                              this.settings.getProperty("port"),
+                              this.settings.getProperty("user"),
+                              this.settings.getProperty("pw"),
+                              (ImportTableModel) this.jTableImport.getModel());
+            }, "import data").start();
+        }
     }//GEN-LAST:event_jButtonImportActionPerformed
 
     /**
@@ -416,7 +445,9 @@ public class Extractum extends javax.swing.JFrame {
         FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
         fd.setDirectory(this.settings.getProperty("path"));
         fd.setVisible(true);
-        String path = fd.getDirectory() + File.separator + fd.getFile();
+        this.importDirectory = fd.getDirectory();
+        this.importFile = fd.getFile();
+        String path = this.importDirectory + File.separator + this.importFile;
         
         new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
         
@@ -436,6 +467,10 @@ public class Extractum extends javax.swing.JFrame {
         
         this.log.log(LogArea.INFO, "load config file finished", null);
     }//GEN-LAST:event_jButtonLoadActionPerformed
+
+    private void jMenuItemOpenConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenConfigActionPerformed
+        this.jButtonLoadActionPerformed(evt);
+    }//GEN-LAST:event_jMenuItemOpenConfigActionPerformed
 
     /**
      * @param args the command line arguments

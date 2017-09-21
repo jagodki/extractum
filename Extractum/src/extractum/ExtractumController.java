@@ -19,7 +19,6 @@ import Utilities.LogArea;
 import database.Database;
 import database.PostgresCommunication;
 import exporting.ExportTableModel;
-import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
 import java.io.IOException;
