@@ -24,6 +24,7 @@ import importing.ImportTableModel;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JProgressBar;
 
@@ -33,7 +34,12 @@ import javax.swing.JProgressBar;
  */
 public class ExtractumController {
 
+    private HashMap<String, String> importSql;
+    private HashMap<String, String> exportSql;
+    
     public ExtractumController() {
+        this.exportSql = new HashMap<>();
+        this.importSql = new HashMap<>();
     }
     
     public String getSqlTemplate(String name, LogArea log) {
@@ -92,7 +98,7 @@ public class ExtractumController {
         
         //now init the table(s)
         if(itm != null) {
-            ih.initImportTableFromConfigFile(path, log, itm, pb);
+            ih.initImportTableFromConfigFile(path, log, itm, pb, this.importSql);
             itm.fireTableDataChanged();
             return ih.getDbt().getName();
         } else if(etm != null) {
@@ -101,6 +107,14 @@ public class ExtractumController {
             return ih.getDbt().getName();
         }
         return "---";
+    }
+    
+    public String getImportSql(String key) {
+        return this.importSql.get(key);
+    }
+    
+    public String getExportSql(String key) {
+        return this.exportSql.get(key);
     }
     
 }

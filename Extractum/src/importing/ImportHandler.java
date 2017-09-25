@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -66,7 +67,8 @@ public class ImportHandler {
     public void initImportTableFromConfigFile(String path,
                                               LogArea log,
                                               ImportTableModel importTable,
-                                              JProgressBar pb) {
+                                              JProgressBar pb,
+                                              HashMap<String, String> sqlStatements) {
         //import the config file
         this.dbt = null;
         this.dbt = this.loadConfigFile(path, log);
@@ -101,6 +103,9 @@ public class ImportHandler {
                 }
             }
             tableContent.setForeignKey(foreignKeys);
+            
+            //SQL-statements
+            sqlStatements.put(table.getName(), table.getSql().trim());
             
             //add the new line  the list of the table content
             li.add(tableContent);

@@ -141,6 +141,11 @@ public class Extractum extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(500, 500));
 
         jTableImport.setModel(new ImportTableModel());
+        jTableImport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableImportMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableImport);
 
         jTextAreaImportSql.setEditable(false);
@@ -190,6 +195,11 @@ public class Extractum extends javax.swing.JFrame {
         jPanelExport.setPreferredSize(new java.awt.Dimension(100, 132));
 
         jTableExport.setModel(new ExportTableModel());
+        jTableExport.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableExportMouseClicked(evt);
+            }
+        });
         jScrollPane4.setViewportView(jTableExport);
 
         jTextAreaExportSql.setColumns(20);
@@ -385,6 +395,10 @@ public class Extractum extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This function starts the import of a selected configuration and its data files.
+     * @param evt 
+     */
     private void jButtonImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonImportActionPerformed
         if(this.importDirectory.equals("") || this.importFile.equals("")) {
             JOptionPane.showMessageDialog(null,
@@ -437,10 +451,18 @@ public class Extractum extends javax.swing.JFrame {
         this.jButtonDbConnectionActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemDBConnectionActionPerformed
 
+    /**
+     * This function imports a config file.
+     * @param evt 
+     */
     private void jMenuItemImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemImportActionPerformed
         this.jButtonImportActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemImportActionPerformed
 
+    /**
+     * This function imports a config file.
+     * @param evt 
+     */
     private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
         fd.setDirectory(this.settings.getProperty("path"));
@@ -471,6 +493,26 @@ public class Extractum extends javax.swing.JFrame {
     private void jMenuItemOpenConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenConfigActionPerformed
         this.jButtonLoadActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemOpenConfigActionPerformed
+
+    /**
+     * This function will be activated after a click on an entry of the import table.
+     * The SQL-statement of the selected table will be shown in the text area.
+     * @param evt 
+     */
+    private void jTableImportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableImportMouseClicked
+        String tableName = (String) ((ImportTableModel) this.jTableImport.getModel()).getValueAt(this.jTableImport.getSelectedRow(), 0);
+        this.jTextAreaImportSql.setText(this.ec.getImportSql(tableName));
+    }//GEN-LAST:event_jTableImportMouseClicked
+
+    /**
+     * This function will be activated after a click on an entry of the export table.
+     * The SQL-statement of the selected table will be shown in the text area.
+     * @param evt 
+     */
+    private void jTableExportMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableExportMouseClicked
+        String tableName = (String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0);
+        this.jTextAreaExportSql.setText(this.ec.getExportSql(tableName));
+    }//GEN-LAST:event_jTableExportMouseClicked
 
     /**
      * @param args the command line arguments

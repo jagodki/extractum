@@ -212,6 +212,9 @@
                       <Connection code="new ImportTableModel()" type="code"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableImportMouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
@@ -314,6 +317,9 @@
                       <Connection code="new ExportTableModel()" type="code"/>
                     </Property>
                   </Properties>
+                  <Events>
+                    <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="jTableExportMouseClicked"/>
+                  </Events>
                 </Component>
               </SubComponents>
             </Container>
