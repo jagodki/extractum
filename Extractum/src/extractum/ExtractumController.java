@@ -21,11 +21,11 @@ import database.PostgresCommunication;
 import exporting.ExportTableModel;
 import importing.ImportHandler;
 import importing.ImportTableModel;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
-import java.util.List;
 import javax.swing.JProgressBar;
 
 /**
@@ -36,20 +36,36 @@ public class ExtractumController {
 
     private HashMap<String, String> importSql;
     private HashMap<String, String> exportSql;
+    private final String pathSchemaTemplate = "/Extractum/sqlTemplates/schema.sql";
+    private final String pathTableTemplate = "/Extractum/sqlTemplates/create.sql";
+    private final String pathImportTemplate = "/Extractum/sqlTemplates/insert.sql";
     
     public ExtractumController() {
         this.exportSql = new HashMap<>();
         this.importSql = new HashMap<>();
     }
     
+    /**
+     * This function parses the content of the given text file from classpath,
+     * i.e. from inside of the current JAR.
+     * @param name the path of the ressource file as String
+     * @param log a log-object for displaying information to the user
+     * @return the content of the file or an empty String if somethin went wrong
+     */
     public String getSqlTemplate(String name, LogArea log) {
         String result = "";
         
-        try {
-            List<String> content = Files.readAllLines(Paths.get(name));
-            result = content.stream().map((line) -> line).reduce(result, String::concat);
+        try (InputStream is = getClass().getResourceAsStream(name);
+             InputStreamReader isr = new InputStreamReader(is);
+             BufferedReader br = new BufferedReader(isr)) {
+            
+            String line;
+            while ((line = br.readLine()) != null) {
+                result += line;
+            }
+            
         } catch (IOException ex) {
-            log.log(LogArea.ERROR, "cannot import SQL-template", ex);
+            log.log(LogArea.ERROR, "cannot read the SQL-template " + name, ex);
         }
         
         return result;
@@ -65,7 +81,7 @@ public class ExtractumController {
                            String user,
                            String pw,
                            ImportTableModel itm) {
-        log.log(LogArea.INFO, "start of importing data", null);
+        log.log(LogArea.INFO, "start of import data", null);
         
         //create a new ImportHandler object and load the config file
         ImportHandler ih = new ImportHandler();
@@ -76,15 +92,18 @@ public class ExtractumController {
         Database db = new Database(host, port, ih.getDbt().getName(), user, pw);
         boolean connectionToDb = db.connectToPostgresDatabase(log);
         if(!connectionToDb) {
-            log.log(LogArea.WARNING, "importing data cancelled", null);
+            log.log(LogArea.WARNING, "import of data cancelled", null);
             return false;
         }
         PostgresCommunication pgc = new PostgresCommunication(db);
         
         //now import the data using ImportHandler
-        ih.importData(port, port, port, log, pbMajor, pbMinor, pgc, itm, directoryOfData);
+        ih.importData(this.getSqlTemplate(this.pathSchemaTemplate, log),
+                      this.getSqlTemplate(this.pathTableTemplate, log),
+                      this.getSqlTemplate(this.pathImportTemplate, log),
+                      log, pbMajor, pbMinor, pgc, itm, directoryOfData);
         
-        log.log(LogArea.INFO, "finished importing data", null);
+        log.log(LogArea.INFO, "finished import data", null);
         return true;
     }
     
@@ -109,12 +128,22 @@ public class ExtractumController {
         return "---";
     }
     
-    public String getImportSql(String key) {
-        return this.importSql.get(key);
+    /**
+     * This function returns the SQL-command to a given import-table.
+     * @param table the name of the table
+     * @return the corresponding sql-command
+     */
+    public String getImportSql(String table) {
+        return this.importSql.get(table);
     }
     
-    public String getExportSql(String key) {
-        return this.exportSql.get(key);
+    /**
+     * This function returns the SQL-command to a given export-table.
+     * @param table the name of the table
+     * @return the corresponding sql-command
+     */
+    public String getExportSql(String table) {
+        return this.exportSql.get(table);
     }
     
 }

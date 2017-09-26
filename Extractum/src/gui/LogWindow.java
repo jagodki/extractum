@@ -108,7 +108,7 @@ public class LogWindow extends javax.swing.JDialog {
 
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         //hide the dialog wether ESC was pressed
-        if(evt.getKeyCode() == 27) {
+        if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
             this.setVisible(false);
         }
     }//GEN-LAST:event_formKeyPressed

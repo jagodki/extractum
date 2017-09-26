@@ -22,8 +22,8 @@ import importing.ImportTableModel;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.Window;
+import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Properties;
@@ -146,6 +146,11 @@ public class Extractum extends javax.swing.JFrame {
                 jTableImportMouseClicked(evt);
             }
         });
+        jTableImport.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTableImportKeyReleased(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTableImport);
 
         jTextAreaImportSql.setEditable(false);
@@ -198,6 +203,11 @@ public class Extractum extends javax.swing.JFrame {
         jTableExport.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTableExportMouseClicked(evt);
+            }
+        });
+        jTableExport.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTableExportKeyReleased(evt);
             }
         });
         jScrollPane4.setViewportView(jTableExport);
@@ -513,6 +523,26 @@ public class Extractum extends javax.swing.JFrame {
         String tableName = (String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0);
         this.jTextAreaExportSql.setText(this.ec.getExportSql(tableName));
     }//GEN-LAST:event_jTableExportMouseClicked
+
+    /**
+     * Updates the SQL-text-area after releasing the up- or down-button in the import-tabel.
+     * @param evt 
+     */
+    private void jTableImportKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableImportKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            this.jTableImportMouseClicked(null);
+        }
+    }//GEN-LAST:event_jTableImportKeyReleased
+
+    /**
+     * Updates the SQL-text-area after releasing the up- or down-button in the export-tabel.
+     * @param evt 
+     */
+    private void jTableExportKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTableExportKeyReleased
+        if(evt.getKeyCode() == KeyEvent.VK_UP || evt.getKeyCode() == KeyEvent.VK_DOWN) {
+            this.jTableExportMouseClicked(null);
+        }
+    }//GEN-LAST:event_jTableExportKeyReleased
 
     /**
      * @param args the command line arguments
