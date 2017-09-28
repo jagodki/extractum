@@ -77,7 +77,7 @@ public class Extractum extends javax.swing.JFrame {
         initComponents();
         
         //update components from settings
-        this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
+        //this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
     }
 
     /**
@@ -91,6 +91,7 @@ public class Extractum extends javax.swing.JFrame {
 
         buttonGroupImport = new javax.swing.ButtonGroup();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jTabbedPaneMain = new javax.swing.JTabbedPane();
         jPanelImport = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -109,6 +110,7 @@ public class Extractum extends javax.swing.JFrame {
         jPanelStatistics = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         jButtonDbConnection = new javax.swing.JButton();
+        jButtonConnectToDatabase = new javax.swing.JButton();
         jButtonLoad = new javax.swing.JButton();
         jButtonImport = new javax.swing.JButton();
         jButtonExport = new javax.swing.JButton();
@@ -125,6 +127,7 @@ public class Extractum extends javax.swing.JFrame {
         jMenuEdit = new javax.swing.JMenu();
         jMenuItemValidateXML = new javax.swing.JMenuItem();
         jMenuItemDBConnection = new javax.swing.JMenuItem();
+        jMenuItemConnectToDatabase = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemSelectAll = new javax.swing.JMenuItem();
         jMenuItemSelectReference = new javax.swing.JMenuItem();
@@ -133,6 +136,8 @@ public class Extractum extends javax.swing.JFrame {
         jMenuItemLog = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
+
+        jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Extractum");
@@ -282,6 +287,17 @@ public class Extractum extends javax.swing.JFrame {
         });
         jToolBar.add(jButtonDbConnection);
 
+        jButtonConnectToDatabase.setText("Connect to Database");
+        jButtonConnectToDatabase.setFocusable(false);
+        jButtonConnectToDatabase.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jButtonConnectToDatabase.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonConnectToDatabase.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonConnectToDatabaseActionPerformed(evt);
+            }
+        });
+        jToolBar.add(jButtonConnectToDatabase);
+
         jButtonLoad.setText("Load");
         jButtonLoad.setFocusable(false);
         jButtonLoad.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -356,6 +372,9 @@ public class Extractum extends javax.swing.JFrame {
             }
         });
         jMenuEdit.add(jMenuItemDBConnection);
+
+        jMenuItemConnectToDatabase.setText("Connect to Database");
+        jMenuEdit.add(jMenuItemConnectToDatabase);
         jMenuEdit.add(jSeparator1);
 
         jMenuItemSelectAll.setText("Select All");
@@ -544,6 +563,16 @@ public class Extractum extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTableExportKeyReleased
 
+    private void jButtonConnectToDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectToDatabaseActionPerformed
+        this.ec.insertSchemasIntoExportTable(this.settings.getProperty("host"),
+                                             this.settings.getProperty("port"),
+                                             this.settings.getProperty("database"),
+                                             this.settings.getProperty("user"),
+                                             this.settings.getProperty("pw"),
+                                             this.jTableExportSchema.getModel(),
+                                             log);
+    }//GEN-LAST:event_jButtonConnectToDatabaseActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -592,6 +621,7 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.Box.Filler filler1;
     private javax.swing.Box.Filler filler2;
     private javax.swing.Box.Filler filler3;
+    private javax.swing.JButton jButtonConnectToDatabase;
     private javax.swing.JButton jButtonDbConnection;
     private javax.swing.JButton jButtonExport;
     private javax.swing.JButton jButtonImport;
@@ -603,6 +633,8 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItemConnectToDatabase;
     private javax.swing.JMenuItem jMenuItemDBConnection;
     private javax.swing.JMenuItem jMenuItemExport;
     private javax.swing.JMenuItem jMenuItemImport;

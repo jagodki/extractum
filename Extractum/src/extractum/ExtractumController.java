@@ -22,11 +22,14 @@ import exporting.ExportTableModel;
 import importing.ImportHandler;
 import importing.ImportTableModel;
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
 import javax.swing.JProgressBar;
+import javax.swing.table.TableModel;
 
 /**
  *
@@ -34,11 +37,12 @@ import javax.swing.JProgressBar;
  */
 public class ExtractumController {
 
-    private HashMap<String, String> importSql;
-    private HashMap<String, String> exportSql;
+    private final HashMap<String, String> importSql;
+    private final HashMap<String, String> exportSql;
     private final String pathSchemaTemplate = "/Extractum/sqlTemplates/schema.sql";
     private final String pathTableTemplate = "/Extractum/sqlTemplates/create.sql";
     private final String pathImportTemplate = "/Extractum/sqlTemplates/insert.sql";
+    private final String pathSchemataTemplate = "./sqlTemplates/schemata.sql";
     
     public ExtractumController() {
         this.exportSql = new HashMap<>();
@@ -55,20 +59,32 @@ public class ExtractumController {
     public String getSqlTemplate(String name, LogArea log) {
         String result = "";
         
-        try (InputStream is = getClass().getResourceAsStream(name);
-             InputStreamReader isr = new InputStreamReader(is);
-             BufferedReader br = new BufferedReader(isr)) {
-            
-            String line;
-            while ((line = br.readLine()) != null) {
-                result += line;
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource(name).getFile());
+        try(Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                    String line = scanner.nextLine();
+                    result += line;
             }
-            
-        } catch (IOException ex) {
-            log.log(LogArea.ERROR, "cannot read the SQL-template " + name, ex);
-        }
+            scanner.close();
+	} catch (Exception e) {
+		log.log(LogArea.ERROR, "cannot read the SQL-template " + name, e);
+	}
         
-        return result;
+//        try (InputStream is = getClass().getResourceAsStream(name);
+//             InputStreamReader isr = new InputStreamReader(is);
+//             BufferedReader br = new BufferedReader(isr)) {
+//            
+//            String line;
+//            while ((line = br.readLine()) != null) {
+//                result += line;
+//            }
+//            
+//        } catch (Exception ex) {
+//            log.log(LogArea.ERROR, "cannot read the SQL-template " + name, ex);
+//        }
+        
+        return result.trim();
     }
     
     public boolean importData(LogArea log,
@@ -144,6 +160,28 @@ public class ExtractumController {
      */
     public String getExportSql(String table) {
         return this.exportSql.get(table);
+    }
+    
+    public void insertSchemasIntoExportTable(String host,
+                                             String port,
+                                             String db,
+                                             String user,
+                                             String pw,
+                                             TableModel tm,
+                                             LogArea log) {
+        //get connection to database
+        Database database = new Database(host, port, db, user, pw);
+        PostgresCommunication pgc = new PostgresCommunication(database);
+        
+        //query the names of all schemata
+        String query = this.getSqlTemplate(this.pathSchemataTemplate, log);
+        List<String> schemata = pgc.selectData(query, log);
+        
+        //iterate over the result and fill the table
+        int schemataSize = schemata.size();
+        for(int i = 0; i < schemataSize; i++) {
+            tm.setValueAt(schemata.get(i), i, 0);
+        }
     }
     
 }
