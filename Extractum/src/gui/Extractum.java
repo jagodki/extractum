@@ -19,6 +19,7 @@ import Utilities.LogArea;
 import exporting.ExportTableModel;
 import extractum.ExtractumController;
 import importing.ImportTableModel;
+import java.awt.Dimension;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.awt.Window;
@@ -32,6 +33,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -105,7 +107,7 @@ public class Extractum extends javax.swing.JFrame {
         jTableExport = new javax.swing.JTable();
         jScrollPane6 = new javax.swing.JScrollPane();
         jTextAreaExportSql = new javax.swing.JTextArea();
-        jScrollPane5 = new javax.swing.JScrollPane();
+        jScrollPane2 = new javax.swing.JScrollPane();
         jTableExportSchema = new javax.swing.JTable();
         jPanelStatistics = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
@@ -221,16 +223,39 @@ public class Extractum extends javax.swing.JFrame {
         jTextAreaExportSql.setRows(5);
         jScrollPane6.setViewportView(jTextAreaExportSql);
 
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(7500, 7500));
+
         jTableExportSchema.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null}
+
             },
             new String [] {
-                "Schemas"
+                "Schemata"
             }
-        ));
-        jTableExportSchema.setPreferredSize(new java.awt.Dimension(100, 64));
-        jScrollPane5.setViewportView(jTableExportSchema);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTableExportSchema.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jTableExportSchema.setPreferredSize(new java.awt.Dimension(7500, 7500));
+        jTableExportSchema.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTableExportSchemaMouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTableExportSchema);
 
         javax.swing.GroupLayout jPanelExportLayout = new javax.swing.GroupLayout(jPanelExport);
         jPanelExport.setLayout(jPanelExportLayout);
@@ -240,7 +265,7 @@ public class Extractum extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
-                    .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
@@ -250,9 +275,9 @@ public class Extractum extends javax.swing.JFrame {
             .addGroup(jPanelExportLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelExportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
                     .addGroup(jPanelExportLayout.createSequentialGroup()
-                        .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 249, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
@@ -564,14 +589,29 @@ public class Extractum extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableExportKeyReleased
 
     private void jButtonConnectToDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectToDatabaseActionPerformed
-        this.ec.insertSchemasIntoExportTable(this.settings.getProperty("host"),
+        this.ec.insertSchemataIntoExportTable(this.settings.getProperty("host"),
                                              this.settings.getProperty("port"),
                                              this.settings.getProperty("database"),
                                              this.settings.getProperty("user"),
                                              this.settings.getProperty("pw"),
-                                             this.jTableExportSchema.getModel(),
+                                             (DefaultTableModel) this.jTableExportSchema.getModel(),
                                              log);
+        this.jScrollPane2.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
+        this.jTableExportSchema.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
+        this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
     }//GEN-LAST:event_jButtonConnectToDatabaseActionPerformed
+
+    private void jTableExportSchemaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableExportSchemaMouseClicked
+        String selectSchema = (String) this.jTableExportSchema.getValueAt(this.jTableExportSchema.getSelectedRow(), 0);
+        this.ec.insertTablesIntoExportTable(selectSchema,
+                                            this.settings.getProperty("host"),
+                                            this.settings.getProperty("port"),
+                                            this.settings.getProperty("database"),
+                                            this.settings.getProperty("user"),
+                                            this.settings.getProperty("pw"),
+                                            (ExportTableModel) this.jTableExport.getModel(),
+                                            log);
+    }//GEN-LAST:event_jTableExportSchemaMouseClicked
 
     /**
      * @param args the command line arguments
@@ -648,9 +688,9 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelImport;
     private javax.swing.JPanel jPanelStatistics;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JPopupMenu.Separator jSeparator1;

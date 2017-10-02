@@ -216,6 +216,7 @@ public class DatabaseSettings extends javax.swing.JDialog {
         this.settings.setProperty("user", this.jTextFieldUser.getText());
         this.settings.setProperty("port", this.jTextFieldPort.getText());
         this.settings.setProperty("host", this.jTextFieldHost.getText());
+        this.settings.setProperty("pw", new String(jPasswordFieldPw.getPassword()));
         this.setVisible(false);
     }//GEN-LAST:event_jButtonSaveActionPerformed
 

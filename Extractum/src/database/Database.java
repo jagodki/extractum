@@ -147,7 +147,7 @@ public class Database {
         //connect to the database
         try {
             this.connection = DriverManager.getConnection(
-                    "jdbc:postgresql://" + this.host + ":" + this.port, this.user, this.pw);
+                    "jdbc:postgresql://" + this.host + ":" + this.port + "/" + this.database, this.user, this.pw);
         } catch (SQLException e) {
             log.log(LogArea.ERROR, "connection to database failed", e);
             return false;
@@ -155,6 +155,14 @@ public class Database {
         
         log.log(LogArea.INFO, "successfully connected to database", null);
         return true;
+    }
+    
+    public void close(LogArea log) {
+        try {
+            this.connection.close();
+        } catch (SQLException ex) {
+            log.log(LogArea.ERROR, "cannot close the database connection", ex);
+        }
     }
     
 }

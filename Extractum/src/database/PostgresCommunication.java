@@ -16,6 +16,7 @@
 package database;
 
 import Utilities.LogArea;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,8 +32,6 @@ import java.util.List;
 public class PostgresCommunication {
     
     private Database db;
-    private ResultSet rs = null;
-    private Statement st =  null;
 
     /**
      * The empty constructor of the class.
@@ -96,9 +95,8 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
-            this.st = null;
-            this.st = this.db.getConnection().createStatement();
-            st.executeUpdate(sqlCommand);
+            PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
+            st.executeUpdate();
             return true;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command failed", ex);
@@ -129,10 +127,10 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
-            this.st = null;
-            this.st = this.db.getConnection().createStatement();
-            st.executeUpdate(sqlCommand);
-            return true;
+            PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
+            boolean result = st.execute();
+            st.close();
+            return result;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command CREATE TABLE failed", ex);
             return false;
@@ -148,26 +146,27 @@ public class PostgresCommunication {
      * @return the result set as a List of Strings, each entry contains a comma-separeted dataset
      */
     public List<String> selectData(String sqlCommand, LogArea log) {
-        if(sqlCommand.startsWith("select")) {
+        if(sqlCommand.toUpperCase().startsWith("SELECT")) {
             //execute the statement
             try {
-                this.st = this.db.getConnection().createStatement();
-                this.rs = st.executeQuery(sqlCommand);
+                PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
+                ResultSet rs = st.executeQuery();
 
                 //create the resulting list
                 List<String> result = new ArrayList<>();
-                int columnCount = this.rs.getMetaData().getColumnCount();
-                while(this.rs.next()) {
+                int columnCount = rs.getMetaData().getColumnCount();
+                while(rs.next()) {
                     String resultEntry = "";
-                    for(int i = 0; i < columnCount; i++) {
-                        resultEntry += this.rs.getString(i) + ";";
+                    for(int i = 1; i <= columnCount; i++) {
+                        resultEntry += rs.getString(i) + ";";
                     }
                     //remove the last character (;) from our result string
                     if(resultEntry.length() > 1) {
-                        resultEntry = resultEntry.substring(0, resultEntry.length() - 2);
+                        resultEntry = resultEntry.substring(0, resultEntry.length() - 1);
                     }
                     result.add(resultEntry);
                 }
+                st.close();
                 return result;
 
             } catch (SQLException ex) {
@@ -233,9 +232,10 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
-            this.st = null;
-            this.st = this.db.getConnection().createStatement();
-            return st.execute(sqlCommand);
+            PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
+            boolean result = st.execute();
+            st.close();
+            return result;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command CREATE VIEW failed", ex);
             return false;
@@ -254,9 +254,10 @@ public class PostgresCommunication {
         
         //execute the statement
         try {
-            this.st = null;
-            this.st = this.db.getConnection().createStatement();
-            return st.execute(sqlCommand);
+            PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
+            boolean result = st.execute();
+            st.close();
+            return result;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command CREATE SCHEMA failed", ex);
             return false;
