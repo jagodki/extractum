@@ -71,4 +71,29 @@ public class ExportTableModel extends AbstractTableModel {
          return columnNames[columnIndex];
     }
     
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return (col == 2); 
+    }
+    
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        ExportTableContent tc = this.li.get(row);
+        switch(col) {
+            case 0:
+                tc.setTableName((String) value);
+                break;
+            case 1:
+                tc.setPrimaryKey((String) value);
+                break;
+            case 2:
+                tc.setExportTable((Boolean) value);
+                break;
+        }
+    }
+    
+    public ExportTableContent getRow(int rowIndex) {
+        return this.li.get(rowIndex);
+    }
+    
 }

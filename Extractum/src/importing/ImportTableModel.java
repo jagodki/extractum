@@ -72,6 +72,33 @@ public class ImportTableModel extends AbstractTableModel {
          return columnNames[columnIndex];
     }
     
+    @Override
+    public boolean isCellEditable(int row, int col) {
+        return (col == 4); 
+    }
+    
+    @Override
+    public void setValueAt(Object value, int row, int col) {
+        ImportTableContent tc = this.li.get(row);
+        switch(col) {
+            case 0:
+                tc.setTableName(((String) value));
+                break;
+            case 1:
+                tc.setPrimaryKey((String) value);
+                break;
+            case 2:
+                tc.setForeignKey((String) value);
+                break;
+            case 3:
+                tc.setPath((String) value);
+                break;
+            case 4:
+                tc.setImportTable((Boolean) value);
+                break;
+        }
+    }
+    
     public ImportTableContent getRow(int rowIndex) {
         return this.li.get(rowIndex);
     }

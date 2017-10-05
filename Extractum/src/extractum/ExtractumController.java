@@ -221,4 +221,36 @@ public class ExtractumController {
         database.close(log);
     }
     
+    public void selectAll(int tabIndex, ImportTableModel itm, ExportTableModel etm) {
+        if(tabIndex == 0) {
+            int maxRow = itm.getRowCount();
+            for(int i = 0; i < maxRow; i++) {
+                itm.getRow(i).setImportTable(true);
+            }
+            itm.fireTableDataChanged();
+        } else {
+            int maxRow = etm.getRowCount();
+            for(int i = 0; i < maxRow; i++) {
+                etm.getRow(i).setExportTable(true);
+            }
+            etm.fireTableDataChanged();
+        }
+    }
+    
+    public void unselectAll(int tabIndex, ImportTableModel itm, ExportTableModel etm) {
+        if(tabIndex == 0) {
+            int maxRow = itm.getRowCount();
+            for(int i = 0; i < maxRow; i++) {
+                itm.getRow(i).setImportTable(false);
+            }
+            itm.fireTableDataChanged();
+        } else {
+            int maxRow = etm.getRowCount();
+            for(int i = 0; i < maxRow; i++) {
+                etm.getRow(i).setExportTable(false);
+            }
+            etm.fireTableDataChanged();
+        }
+    }
+    
 }

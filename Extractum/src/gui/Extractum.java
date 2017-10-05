@@ -132,7 +132,7 @@ public class Extractum extends javax.swing.JFrame {
         jMenuItemConnectToDatabase = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         jMenuItemSelectAll = new javax.swing.JMenuItem();
-        jMenuItemSelectReference = new javax.swing.JMenuItem();
+        jMenuItemUnselectAll = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuItemLicense = new javax.swing.JMenuItem();
         jMenuItemLog = new javax.swing.JMenuItem();
@@ -147,6 +147,7 @@ public class Extractum extends javax.swing.JFrame {
         setLocation(new java.awt.Point(100, 100));
         setMinimumSize(new java.awt.Dimension(500, 500));
 
+        jTableImport.setAutoCreateRowSorter(true);
         jTableImport.setModel(new ImportTableModel());
         jTableImport.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -402,11 +403,23 @@ public class Extractum extends javax.swing.JFrame {
         jMenuEdit.add(jMenuItemConnectToDatabase);
         jMenuEdit.add(jSeparator1);
 
+        jMenuItemSelectAll.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemSelectAll.setText("Select All");
+        jMenuItemSelectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSelectAllActionPerformed(evt);
+            }
+        });
         jMenuEdit.add(jMenuItemSelectAll);
 
-        jMenuItemSelectReference.setText("Select Referenced Tables");
-        jMenuEdit.add(jMenuItemSelectReference);
+        jMenuItemUnselectAll.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemUnselectAll.setText("Unselect All");
+        jMenuItemUnselectAll.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemUnselectAllActionPerformed(evt);
+            }
+        });
+        jMenuEdit.add(jMenuItemUnselectAll);
 
         jMenuBar.add(jMenuEdit);
 
@@ -544,6 +557,10 @@ public class Extractum extends javax.swing.JFrame {
         this.log.log(LogArea.INFO, "load config file finished", null);
     }//GEN-LAST:event_jButtonLoadActionPerformed
 
+    /**
+     * This function imports a config file.
+     * @param evt 
+     */
     private void jMenuItemOpenConfigActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenConfigActionPerformed
         this.jButtonLoadActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemOpenConfigActionPerformed
@@ -614,6 +631,26 @@ public class Extractum extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableExportSchemaMouseClicked
 
     /**
+     * This function selects all checkboxes of the main table in the current tab.
+     * @param evt 
+     */
+    private void jMenuItemSelectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSelectAllActionPerformed
+        this.ec.selectAll(this.jTabbedPaneMain.getSelectedIndex(),
+                          (ImportTableModel) this.jTableImport.getModel(),
+                          (ExportTableModel) this.jTableExport.getModel());
+    }//GEN-LAST:event_jMenuItemSelectAllActionPerformed
+
+    /**
+     * This function unselects all checkboxes of the main table in the current tab.
+     * @param evt 
+     */
+    private void jMenuItemUnselectAllActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemUnselectAllActionPerformed
+        this.ec.unselectAll(this.jTabbedPaneMain.getSelectedIndex(),
+                          (ImportTableModel) this.jTableImport.getModel(),
+                          (ExportTableModel) this.jTableExport.getModel());
+    }//GEN-LAST:event_jMenuItemUnselectAllActionPerformed
+
+    /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
@@ -682,7 +719,7 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemLog;
     private javax.swing.JMenuItem jMenuItemOpenConfig;
     private javax.swing.JMenuItem jMenuItemSelectAll;
-    private javax.swing.JMenuItem jMenuItemSelectReference;
+    private javax.swing.JMenuItem jMenuItemUnselectAll;
     private javax.swing.JMenuItem jMenuItemValidateXML;
     private javax.swing.JPanel jPanelExport;
     private javax.swing.JPanel jPanelImport;
