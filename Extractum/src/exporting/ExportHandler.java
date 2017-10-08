@@ -166,7 +166,6 @@ public class ExportHandler {
      * @param pgc the database communicator
      * @param extr an ExtractumController object to use additional functions
      * @param sqlStatements
-     * @param destinationDirectory
      * @return true whether export was successfull, otherwise false
      */
     public boolean exportToXml(String path,
@@ -176,8 +175,7 @@ public class ExportHandler {
                                tableContent,
                                PostgresCommunication pgc,
                                ExtractumController extr,
-                               String[] sqlStatements,
-                               String destinationDirectory) {
+                               String[] sqlStatements) {
         String absolutePath = path + File.pathSeparator + "config.xml";
         
         //create the JAXB object
@@ -224,7 +222,8 @@ public class ExportHandler {
      */
     private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
                                                          PostgresCommunication pgc,
-                                                         LogArea log, ExtractumController extr,
+                                                         LogArea log,
+                                                         ExtractumController extr,
                                                          String[] sqlStatements,
                                                          String destinationDirectory) {
         DatabaseType dbt = new DatabaseType();

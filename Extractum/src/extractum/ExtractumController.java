@@ -19,8 +19,10 @@ import Utilities.LogArea;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import database.Database;
 import database.PostgresCommunication;
+import exporting.ExportHandler;
 import exporting.ExportTableContent;
 import exporting.ExportTableModel;
+import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
 import java.io.IOException;
@@ -107,6 +109,37 @@ public class ExtractumController {
         log.log(LogArea.INFO, "finished import data", null);
         db.close(log);
         return true;
+    }
+    
+    public boolean exportTables(JProgressBar pbMajor,
+                             JProgressBar pbMinor,
+                             LogArea log,
+                             String directory,
+                             String host,
+                             String port,
+                             String user,
+                             String pw,
+                             String database,
+                             String path,
+                             ExportTableModel etm) {
+        log.log(LogArea.INFO, "start export of data", null);
+        pbMajor.setValue(0);
+        
+        //init the connection to the database server
+        Database db = new Database(host, port, database, user, pw);
+        boolean connectionToDb = db.connectToPostgresDatabase(log);
+        if(!connectionToDb) {
+            log.log(LogArea.WARNING, "export of data cancelled", null);
+            return false;
+        }
+        PostgresCommunication pgc = new PostgresCommunication(db);
+        
+        //create a new ExportHandler object and and a new JAXB-root-element
+        ExportHandler eh = new ExportHandler();
+        DatabaseType xmlRootElement = new DatabaseType();
+        
+        //export config file
+        eh.exportToXml(path, xmlRootElement, log, etm, pgc, this, sqlStatements);
     }
     
     public String initTable(ImportTableModel itm,
