@@ -100,8 +100,6 @@ public class Extractum extends javax.swing.JFrame {
         jTableImport = new javax.swing.JTable();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTextAreaImportSql = new javax.swing.JTextArea();
-        jScrollPane7 = new javax.swing.JScrollPane();
-        jTableImportSchema = new javax.swing.JTable();
         jPanelExport = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         jTableExport = new javax.swing.JTable();
@@ -109,7 +107,6 @@ public class Extractum extends javax.swing.JFrame {
         jTextAreaExportSql = new javax.swing.JTextArea();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTableExportSchema = new javax.swing.JTable();
-        jPanelStatistics = new javax.swing.JPanel();
         jToolBar = new javax.swing.JToolBar();
         jButtonDbConnection = new javax.swing.JButton();
         jButtonConnectToDatabase = new javax.swing.JButton();
@@ -166,28 +163,15 @@ public class Extractum extends javax.swing.JFrame {
         jTextAreaImportSql.setRows(5);
         jScrollPane3.setViewportView(jTextAreaImportSql);
 
-        jTableImportSchema.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null}
-            },
-            new String [] {
-                "Schemas"
-            }
-        ));
-        jTableImportSchema.setPreferredSize(new java.awt.Dimension(100, 64));
-        jScrollPane7.setViewportView(jTableImportSchema);
-
         javax.swing.GroupLayout jPanelImportLayout = new javax.swing.GroupLayout(jPanelImport);
         jPanelImport.setLayout(jPanelImportLayout);
         jPanelImportLayout.setHorizontalGroup(
             jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelImportLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 321, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 266, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 587, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanelImportLayout.setVerticalGroup(
@@ -195,11 +179,8 @@ public class Extractum extends javax.swing.JFrame {
             .addGroup(jPanelImportLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelImportLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1)
-                    .addGroup(jPanelImportLayout.createSequentialGroup()
-                        .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                        .addGap(7, 7, 7)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 248, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 420, Short.MAX_VALUE)
+                    .addComponent(jScrollPane3))
                 .addContainerGap())
         );
 
@@ -285,19 +266,6 @@ public class Extractum extends javax.swing.JFrame {
         );
 
         jTabbedPaneMain.addTab("Export Config", jPanelExport);
-
-        javax.swing.GroupLayout jPanelStatisticsLayout = new javax.swing.GroupLayout(jPanelStatistics);
-        jPanelStatistics.setLayout(jPanelStatisticsLayout);
-        jPanelStatisticsLayout.setHorizontalGroup(
-            jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 926, Short.MAX_VALUE)
-        );
-        jPanelStatisticsLayout.setVerticalGroup(
-            jPanelStatisticsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 432, Short.MAX_VALUE)
-        );
-
-        jTabbedPaneMain.addTab("Database Statistics", jPanelStatistics);
 
         jToolBar.setFloatable(false);
         jToolBar.setRollover(true);
@@ -723,19 +691,16 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemValidateXML;
     private javax.swing.JPanel jPanelExport;
     private javax.swing.JPanel jPanelImport;
-    private javax.swing.JPanel jPanelStatistics;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane6;
-    private javax.swing.JScrollPane jScrollPane7;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTabbedPane jTabbedPaneMain;
     private javax.swing.JTable jTableExport;
     private javax.swing.JTable jTableExportSchema;
     private javax.swing.JTable jTableImport;
-    private javax.swing.JTable jTableImportSchema;
     private javax.swing.JTextArea jTextAreaExportSql;
     private javax.swing.JTextArea jTextAreaImportSql;
     private javax.swing.JToolBar jToolBar;

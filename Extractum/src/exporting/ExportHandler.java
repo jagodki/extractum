@@ -28,6 +28,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -164,8 +165,9 @@ public class ExportHandler {
      * @param log an object for logging information
      * @param tableContent the table of the export tab of the gui
      * @param pgc the database communicator
-     * @param extr an ExtractumController object to use additional functions
-     * @param sqlStatements
+     * @param sqlConstraint the sql-template for querying constraints
+     * @param sqlTypes the sql-template for querying types of columns
+     * @param sqlStatements a HashMap with table names and corresponding sql statements as key-value-pair
      * @return true whether export was successfull, otherwise false
      */
     public boolean exportToXml(String path,
@@ -174,13 +176,14 @@ public class ExportHandler {
                                ExportTableModel
                                tableContent,
                                PostgresCommunication pgc,
-                               ExtractumController extr,
-                               String[] sqlStatements) {
+                               String sqlConstraint,
+                               String sqlTypes,
+                               HashMap<String, String> sqlStatements) {
         String absolutePath = path + File.pathSeparator + "config.xml";
         
         //create the JAXB object
         rootObject = this.extractConfigurationFromDatabase(tableContent,
-                pgc, log, extr, sqlStatements, absolutePath);
+                pgc, log, sqlConstraint, sqlTypes, sqlStatements, absolutePath);
         
         //check, whether a file with the specified path exists already and delete it if necessary
         boolean deleteFile = this.deleteExistingFile(absolutePath, log);
@@ -215,23 +218,25 @@ public class ExportHandler {
      * @param tableContent the table of the export tab of the gui
      * @param pgc the database communicator
      * @param log an object for logging information
-     * @param extr an ExtractumController object to use additional functions
-     * @param sqlStatements the sql-select-statements as an array of strings from the gui
+     * @param sqlConstraint the sql-template for querying constraints
+     * @param sqlTypes the sql-template for querying types of columns
+     * @param sqlStatements the sql-select-statements as a HashMap of strings and strings
      * @param destinationDirectory the directory where all file have to be saved in
      * @return 
      */
     private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
                                                          PostgresCommunication pgc,
                                                          LogArea log,
-                                                         ExtractumController extr,
-                                                         String[] sqlStatements,
+                                                         String sqlConstraint,
+                                                         String sqlTypes,
+                                                         HashMap<String, String> sqlStatements,
                                                          String destinationDirectory) {
         DatabaseType dbt = new DatabaseType();
         
         int rowCount = tableContent.getRowCount();
         
         //check the count of sql statement and the row count of the table
-        if(sqlStatements.length != tableContent.getRowCount()) {
+        if(sqlStatements.size() != tableContent.getRowCount()) {
             log.log(LogArea.WARNING, "SQL statements and table have not the same size", null);
             return null;
         }
@@ -242,7 +247,7 @@ public class ExportHandler {
 
                 //add primary keys
                 List<String> pk = pgc.selectColumnsOfConstraint((String) tableContent.getValueAt(i, 0),
-                        "PRIMARY KEY", extr.getSqlTemplate("constraint.sql", log), log);
+                        "PRIMARY KEY", sqlConstraint, log);
                 PrimaryKeysType pkt = new PrimaryKeysType();
                 for(String entry : pk) {
                     PrimaryKeyType primaryKey = new PrimaryKeyType();
@@ -256,14 +261,14 @@ public class ExportHandler {
                 tt.setName(tableName);
                 
                 //add the sql statement
-                tt.setSql(sqlStatements[i]);
+                tt.setSql(sqlStatements.get(tableName));
                 
                 //add the export path
                 tt.setPath(destinationDirectory + File.pathSeparator + tableName + ".csv");
                 
                 //add all columns with their name and data type
                 List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(tableName,
-                        extr.getSqlTemplate("datatypes.sql", log), log);
+                        sqlTypes, log);
                 ColumnsType ct = new ColumnsType();
                 for(String entry : columnsNamesTypes) {
                     ColType column = new ColType();

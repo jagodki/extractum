@@ -16,7 +16,6 @@
 package extractum;
 
 import Utilities.LogArea;
-import com.sun.javafx.scene.control.skin.VirtualFlow;
 import database.Database;
 import database.PostgresCommunication;
 import exporting.ExportHandler;
@@ -48,6 +47,7 @@ public class ExtractumController {
     private final String pathSchemataTemplate = "src/sqlTemplates/schemata.sql";
     private final String pathTablesTemplate = "src/sqlTemplates/tables.sql";
     private final String pathConstraintTemplate = "src/sqlTemplates/constraint.sql";
+    private final String patDataTypesTemplate = "src/sqlTemplates/datatypes.sql";
     
     public ExtractumController() {
         this.exportSql = new HashMap<>();
@@ -139,7 +139,14 @@ public class ExtractumController {
         DatabaseType xmlRootElement = new DatabaseType();
         
         //export config file
-        eh.exportToXml(path, xmlRootElement, log, etm, pgc, this, sqlStatements);
+        String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate, log);
+        String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate, log);
+        eh.exportToXml(path, xmlRootElement, log, etm, pgc, constraintTemplate, typesTemplate, this.exportSql);
+        
+        //export tables from database to CSV-files
+        eh.exportToCSV(xmlRootElement, pgc, pbMajor, pbMinor, log, directory);
+        
+        return true;
     }
     
     public String initTable(ImportTableModel itm,
