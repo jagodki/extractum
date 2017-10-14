@@ -114,7 +114,6 @@ public class ExtractumController {
     public boolean exportTables(JProgressBar pbMajor,
                              JProgressBar pbMinor,
                              LogArea log,
-                             String directory,
                              String host,
                              String port,
                              String user,
@@ -144,7 +143,7 @@ public class ExtractumController {
         eh.exportToXml(path, xmlRootElement, log, etm, pgc, constraintTemplate, typesTemplate, this.exportSql);
         
         //export tables from database to CSV-files
-        eh.exportToCSV(xmlRootElement, pgc, pbMajor, pbMinor, log, directory);
+        eh.exportToCSV(xmlRootElement, pgc, pbMajor, pbMinor, log, path);
         
         return true;
     }

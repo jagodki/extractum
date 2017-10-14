@@ -19,7 +19,6 @@ import Utilities.LogArea;
 import java.util.Properties;
 import database.Database;
 import java.awt.event.KeyEvent;
-import javafx.scene.input.KeyCode;
 import javax.swing.JOptionPane;
 
 /**
@@ -48,6 +47,14 @@ public class DatabaseSettings extends javax.swing.JDialog {
         this.jTextFieldUser.setText(this.settings.getProperty("user"));
     }
 
+    /**
+     * This function returns the password a a String object
+     * @return a String representing the password
+     */
+    protected String getPw() {
+        return new String(this.jPasswordFieldPw.getPassword());
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -216,7 +223,7 @@ public class DatabaseSettings extends javax.swing.JDialog {
         this.settings.setProperty("user", this.jTextFieldUser.getText());
         this.settings.setProperty("port", this.jTextFieldPort.getText());
         this.settings.setProperty("host", this.jTextFieldHost.getText());
-        this.settings.setProperty("pw", new String(jPasswordFieldPw.getPassword()));
+        //this.settings.setProperty("pw", new String(jPasswordFieldPw.getPassword()));
         this.setVisible(false);
     }//GEN-LAST:event_jButtonSaveActionPerformed
 

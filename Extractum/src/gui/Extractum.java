@@ -318,6 +318,11 @@ public class Extractum extends javax.swing.JFrame {
         jButtonExport.setFocusable(false);
         jButtonExport.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButtonExport.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jButtonExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonExportActionPerformed(evt);
+            }
+        });
         jToolBar.add(jButtonExport);
         jToolBar.add(filler2);
 
@@ -617,6 +622,29 @@ public class Extractum extends javax.swing.JFrame {
                           (ImportTableModel) this.jTableImport.getModel(),
                           (ExportTableModel) this.jTableExport.getModel());
     }//GEN-LAST:event_jMenuItemUnselectAllActionPerformed
+
+    private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
+        FileDialog fd = new FileDialog(new Frame(), "Choose directory for export", FileDialog.SAVE);
+        fd.setDirectory(this.settings.getProperty("path"));
+        fd.setVisible(true);
+        this.exportDirectory = fd.getDirectory();
+        String path = this.exportDirectory;
+        
+        new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
+        
+        new Thread (() -> {
+            this.ec.exportTables(this.logWindow.getjProgressBarMain(),
+                                 this.logWindow.getjProgressBarMinor(),
+                                 this.log,
+                                 this.settings.getProperty("host"),
+                                 this.settings.getProperty("port"),
+                                 this.settings.getProperty("user"),
+                                 this.dbSettings.getPw(),
+                                 this.settings.getProperty("database"),
+                                 path,
+                                 (ExportTableModel) this.jTableExport.getModel());
+        }).start();
+    }//GEN-LAST:event_jButtonExportActionPerformed
 
     /**
      * @param args the command line arguments

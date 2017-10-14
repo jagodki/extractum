@@ -122,7 +122,7 @@ public class ExportHandler {
             List<String> datasets = pgc.selectData(table.getSql(), log);
             
             //write all the data to a file
-            this.writeDatasetsToCsv(directory + File.pathSeparator + table.getName() + ".csv", datasets, log, headingline, pgSec);
+            this.writeDatasetsToCsv(directory + File.pathSeparator + "data" + File.pathSeparator + table.getName() + ".csv", datasets, log, headingline, pgSec);
             
             pbMain.setValue(pbMain.getValue() + 1);
         }
