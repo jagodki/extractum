@@ -57,6 +57,10 @@ public class Database {
         this.pw = pw;
     }
 
+    public void setPw(String pw) {
+        this.pw = pw;
+    }
+    
     /**
      * This function returns the url of the host of the database server.
      * @return the information about the host as String object

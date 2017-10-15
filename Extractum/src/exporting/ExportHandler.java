@@ -19,7 +19,6 @@ import Utilities.LogArea;
 import database.PostgresCommunication;
 import extractumXml.DatabaseType;
 import extractumXml.TableType;
-import extractum.ExtractumController;
 import extractumXml.ColType;
 import extractumXml.ColumnsType;
 import extractumXml.PrimaryKeyType;

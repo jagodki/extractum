@@ -15,9 +15,7 @@
  */
 package gui;
 
-import Utilities.LogArea;
 import java.util.Properties;
-import database.Database;
 import java.awt.event.KeyEvent;
 import javax.swing.JOptionPane;
 
@@ -27,18 +25,18 @@ import javax.swing.JOptionPane;
  */
 public class DatabaseSettings extends javax.swing.JDialog {
 
-    private LogArea log;
     private Properties settings;
+    private Extractum extractum;
     
     /**
      * Creates new form DatabaseSettings
      */
-    public DatabaseSettings(java.awt.Frame parent, boolean modal, LogArea log, Properties settings) {
+    public DatabaseSettings(java.awt.Frame parent, boolean modal, Properties settings, Extractum extractum) {
         super(parent, modal);
         initComponents();
         this.setFocusable(true);
         this.settings = settings;
-        this.log = log;
+        this.extractum = extractum;
         
         //init the text and password fields
         this.jTextFieldDb.setText(this.settings.getProperty("database"));
@@ -199,12 +197,12 @@ public class DatabaseSettings extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckActionPerformed
-        Database db = new Database(jTextFieldHost.getText(),
-            jTextFieldPort.getText(),
-            jTextFieldDb.getText(),
-            jTextFieldUser.getText(),
-            new String(jPasswordFieldPw.getPassword()));
-        boolean successfullConnection = db.connectToPostgresDatabase(log);
+        boolean successfullConnection = extractum.checkDbConnection(jTextFieldDb.getText(),
+                                                                    jTextFieldHost.getText(),
+                                                                    jTextFieldPort.getText(),
+                                                                    jTextFieldUser.getText(),
+                                                                    new String(jPasswordFieldPw.getPassword()));
+        
         if(successfullConnection) {
             JOptionPane.showMessageDialog(null,
                 "Success!",

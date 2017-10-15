@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import javax.swing.JProgressBar;
+import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -39,6 +40,9 @@ import javax.swing.table.DefaultTableModel;
  */
 public class ExtractumController {
 
+    private final Database db;
+    private final PostgresCommunication pgc;
+    private final LogArea log;
     private final HashMap<String, String> importSql;
     private final HashMap<String, String> exportSql;
     private final String pathSchemaTemplate = "src/sqlTemplates/schema.sql";
@@ -52,16 +56,34 @@ public class ExtractumController {
     public ExtractumController() {
         this.exportSql = new HashMap<>();
         this.importSql = new HashMap<>();
+        this.db = new Database();
+        this.pgc = new PostgresCommunication();
+        this.log = new LogArea(null);
+    }
+    
+    public ExtractumController(JTextArea ta) {
+        this.exportSql = new HashMap<>();
+        this.importSql = new HashMap<>();
+        this.db = new Database();
+        this.pgc = new PostgresCommunication();
+        this.log = new LogArea(ta);
+    }
+    
+    public LogArea getLog() {
+        return log;
+    }
+    
+    public Database getDb() {
+        return this.db;
     }
     
     /**
      * This function parses the content of the given text file from classpath,
      * i.e. from inside of the current JAR.
      * @param name the path of the ressource file as String
-     * @param log a log-object for displaying information to the user
      * @return the content of the file or an empty String if somethin went wrong
      */
-    public String getSqlTemplate(String name, LogArea log) {
+    public String getSqlTemplate(String name) {
         String result = ""; 
         try {           
             List<String> allLines = Files.readAllLines(Paths.get(name));
@@ -69,81 +91,51 @@ public class ExtractumController {
                 result += singleLine + " ";
             }
         } catch (IOException ex) {
-            log.log(LogArea.ERROR, "cannot read SQL-template file " + name, ex);
+            this.log.log(LogArea.ERROR, "cannot read SQL-template file " + name, ex);
         }
         return result.trim();
     }
     
-    public boolean importData(LogArea log,
-                           JProgressBar pbMajor,
+    public boolean importData(JProgressBar pbMajor,
                            JProgressBar pbMinor,
                            String pathOfConfigurationFile,
                            String directoryOfData,
-                           String host,
-                           String port,
-                           String user,
-                           String pw,
                            ImportTableModel itm) {
-        log.log(LogArea.INFO, "start of import data", null);
+        this.log.log(LogArea.INFO, "start of import data", null);
         
         //create a new ImportHandler object and load the config file
         ImportHandler ih = new ImportHandler();
-        ih.loadConfigFile(pathOfConfigurationFile, log);
-        log.log(LogArea.INFO, "load config file finished", null);
-        
-        //init the connection to the database server
-        Database db = new Database(host, port, ih.getDbt().getName(), user, pw);
-        boolean connectionToDb = db.connectToPostgresDatabase(log);
-        if(!connectionToDb) {
-            log.log(LogArea.WARNING, "import of data cancelled", null);
-            return false;
-        }
-        PostgresCommunication pgc = new PostgresCommunication(db);
+        ih.loadConfigFile(pathOfConfigurationFile, this.log);
+        this.log.log(LogArea.INFO, "load config file finished", null);
         
         //now import the data using ImportHandler
-        ih.importData(this.getSqlTemplate(this.pathSchemaTemplate, log),
-                      this.getSqlTemplate(this.pathTableTemplate, log),
-                      this.getSqlTemplate(this.pathImportTemplate, log),
-                      log, pbMajor, pbMinor, pgc, itm, directoryOfData);
+        ih.importData(this.getSqlTemplate(this.pathSchemaTemplate),
+                      this.getSqlTemplate(this.pathTableTemplate),
+                      this.getSqlTemplate(this.pathImportTemplate),
+                      this.log, pbMajor, pbMinor, pgc, itm, directoryOfData);
         
-        log.log(LogArea.INFO, "finished import data", null);
-        db.close(log);
+        this.log.log(LogArea.INFO, "finished import data", null);
         return true;
     }
     
     public boolean exportTables(JProgressBar pbMajor,
                              JProgressBar pbMinor,
-                             LogArea log,
-                             String host,
-                             String port,
-                             String user,
-                             String pw,
-                             String database,
                              String path,
                              ExportTableModel etm) {
-        log.log(LogArea.INFO, "start export of data", null);
+        this.log.log(LogArea.INFO, "start export of data", null);
         pbMajor.setValue(0);
-        
-        //init the connection to the database server
-        Database db = new Database(host, port, database, user, pw);
-        boolean connectionToDb = db.connectToPostgresDatabase(log);
-        if(!connectionToDb) {
-            log.log(LogArea.WARNING, "export of data cancelled", null);
-            return false;
-        }
-        PostgresCommunication pgc = new PostgresCommunication(db);
         
         //create a new ExportHandler object and and a new JAXB-root-element
         ExportHandler eh = new ExportHandler();
         DatabaseType xmlRootElement = new DatabaseType();
         
         //export config file
-        String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate, log);
-        String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate, log);
-        eh.exportToXml(path, xmlRootElement, log, etm, pgc, constraintTemplate, typesTemplate, this.exportSql);
+        String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate);
+        String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate);
+        eh.exportToXml(path, xmlRootElement, this.log, etm, this.pgc, constraintTemplate, typesTemplate, this.exportSql);
         
         //export tables from database to CSV-files
-        eh.exportToCSV(xmlRootElement, pgc, pbMajor, pbMinor, log, path);
+        eh.exportToCSV(xmlRootElement, this.pgc, pbMajor, pbMinor, this.log, path);
         
         return true;
     }
@@ -151,18 +143,17 @@ public class ExtractumController {
     public String initTable(ImportTableModel itm,
                           ExportTableModel etm,
                           String path,
-                          LogArea log,
                           JProgressBar pb) {
         //create a new ImportHandler object to get access to import-functions
         ImportHandler ih = new ImportHandler();
         
         //now init the table(s)
         if(itm != null) {
-            ih.initImportTableFromConfigFile(path, log, itm, pb, this.importSql);
+            ih.initImportTableFromConfigFile(path, this.log, itm, pb, this.importSql);
             itm.fireTableDataChanged();
             return ih.getDbt().getName();
         } else if(etm != null) {
-            ih.initExportTableFromConfigFile(path, log, etm, pb);
+            ih.initExportTableFromConfigFile(path, this.log, etm, pb);
             etm.fireTableDataChanged();
             return ih.getDbt().getName();
         }
@@ -187,21 +178,11 @@ public class ExtractumController {
         return this.exportSql.get(table);
     }
     
-    public void insertSchemataIntoExportTable(String host,
-                                             String port,
-                                             String db,
-                                             String user,
-                                             String pw,
-                                             DefaultTableModel tm,
-                                             LogArea log) {
-        //get connection to database
-        Database database = new Database(host, port, db, user, pw);
-        database.connectToPostgresDatabase(log);
-        PostgresCommunication pgc = new PostgresCommunication(database);
+    public void insertSchemataIntoExportTable(DefaultTableModel tm) {
         
         //query the names of all schemata
-        String query = this.getSqlTemplate(this.pathSchemataTemplate, log);
-        List<String> schemata = pgc.selectData(query, log);
+        String query = this.getSqlTemplate(this.pathSchemataTemplate);
+        List<String> schemata = this.pgc.selectData(query, this.log);
         
         //iterate over the result and fill the table
         int schemataSize = schemata.size();
@@ -209,33 +190,21 @@ public class ExtractumController {
             tm.addRow(new String[] {schemata.get(i)});
             tm.fireTableDataChanged();
         }
-        database.close(log);
     }
     
     public void insertTablesIntoExportTable(String schemaName,
-                                            String host,
-                                            String port,
-                                            String db,
-                                            String user,
-                                            String pw,
-                                            ExportTableModel etm,
-                                            LogArea log) {
-        //get connection to database
-        Database database = new Database(host, port, db, user, pw);
-        database.connectToPostgresDatabase(log);
-        PostgresCommunication pgc = new PostgresCommunication(database);
-        
+                                            ExportTableModel etm) {
         //get all tables by their name
-        String query = this.getSqlTemplate(this.pathTablesTemplate, log);
-        List<String> tables = pgc.selectTablesOfSchema(schemaName, query, log);
+        String query = this.getSqlTemplate(this.pathTablesTemplate);
+        List<String> tables = this.pgc.selectTablesOfSchema(schemaName, query, this.log);
         
         //prepare the iteration
         List<String> primaryKeys = new ArrayList<>();
-        query = this.getSqlTemplate(this.pathConstraintTemplate, log);
+        query = this.getSqlTemplate(this.pathConstraintTemplate);
         
         for(String table : tables) {
             //get the primary keys
-            List<String> pkList = pgc.selectColumnsOfConstraint(table, "PRIMARY KEY", query, log);
+            List<String> pkList = this.pgc.selectColumnsOfConstraint(table, "PRIMARY KEY", query, this.log);
             String pkConcated = "";
             for(int i = 0; i < pkList.size(); i++) {
                 pkConcated += pkList.get(i);
@@ -257,7 +226,6 @@ public class ExtractumController {
         }
         etm.setLi(li);
         etm.fireTableDataChanged();
-        database.close(log);
     }
     
     public void selectAll(int tabIndex, ImportTableModel itm, ExportTableModel etm) {
@@ -290,6 +258,13 @@ public class ExtractumController {
             }
             etm.fireTableDataChanged();
         }
+    }
+    
+    public boolean connectToDatabase() {
+        this.db.close(this.log);
+        boolean result = this.db.connectToPostgresDatabase(this.log);
+        this.pgc.setDb(this.db);
+        return result;
     }
     
 }

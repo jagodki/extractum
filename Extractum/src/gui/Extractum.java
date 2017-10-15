@@ -41,7 +41,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Extractum extends javax.swing.JFrame {
     
-    private final LogArea log;
     private final LogWindow logWindow;
     private final DatabaseSettings dbSettings;
     private Properties settings;
@@ -56,9 +55,9 @@ public class Extractum extends javax.swing.JFrame {
      */
     public Extractum() {
         this.logWindow = new LogWindow(this, true);
-        this.log = new LogArea(this.logWindow.getjTextAreaLog());
         this.settings = new Properties();
-        this.ec = new ExtractumController();
+        this.ec = new ExtractumController(this.logWindow.getjTextAreaLog());
+        
         this.setFocusable(true);
         
         //import the settings file from class path
@@ -69,17 +68,31 @@ public class Extractum extends javax.swing.JFrame {
                 "Not able to load settings file.\nPlease reade the log for further information.",
                 "Settings",
                 JOptionPane.ERROR_MESSAGE);
-            this.log.log(LogArea.ERROR, "cannot load settings file", ex);
+            this.ec.getLog().log(LogArea.ERROR, "cannot load settings file", ex);
         }
         
         //init the next window
-        this.dbSettings = new DatabaseSettings(this, true, this.log, this.settings);
+        this.dbSettings = new DatabaseSettings(this, true, this.settings, this);
         
         enableOSXFullscreen(this);
         initComponents();
         
         //update components from settings
         //this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
+    }
+    
+    protected boolean checkDbConnection(String db, String host, String port, String user, String pw) {
+        this.ec.getDb().setDatabase(db);
+        this.ec.getDb().setHost(host);
+        this.ec.getDb().setPort(port);
+        this.ec.getDb().setUser(user);
+        this.ec.getDb().setPw(pw);
+        
+        return this.ec.connectToDatabase();
+    }
+    
+    protected LogArea getLog() {
+        return this.ec.getLog();
     }
 
     /**
@@ -354,7 +367,13 @@ public class Extractum extends javax.swing.JFrame {
         });
         jMenuFile.add(jMenuItemImport);
 
+        jMenuItemExport.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemExport.setText("Export Data");
+        jMenuItemExport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemExportActionPerformed(evt);
+            }
+        });
         jMenuFile.add(jMenuItemExport);
 
         jMenuBar.add(jMenuFile);
@@ -447,15 +466,10 @@ public class Extractum extends javax.swing.JFrame {
                         JOptionPane.ERROR_MESSAGE);
         } else {
             new Thread(() -> {
-                ec.importData(log,
-                              this.logWindow.getjProgressBarMain(),
+                ec.importData(this.logWindow.getjProgressBarMain(),
                               this.logWindow.getjProgressBarMinor(),
                               "",
                               "",
-                              this.settings.getProperty("host"),
-                              this.settings.getProperty("port"),
-                              this.settings.getProperty("user"),
-                              this.settings.getProperty("pw"),
                               (ImportTableModel) this.jTableImport.getModel());
             }, "import data").start();
         }
@@ -518,16 +532,22 @@ public class Extractum extends javax.swing.JFrame {
         new Thread(() -> {
             if(this.jTabbedPaneMain.getSelectedIndex() == 0) {
                 this.jLabelCurrentDatabase.setText(
-                    this.ec.initTable((ImportTableModel) this.jTableImport.getModel(), null, path, log, logWindow.getjProgressBarMain())
+                    this.ec.initTable((ImportTableModel) this.jTableImport.getModel(),
+                                      null,
+                                      path,
+                                      this.logWindow.getjProgressBarMain())
                 );
             } else if(this.jTabbedPaneMain.getSelectedIndex() == 1) {
                 this.jLabelCurrentDatabase.setText(
-                     this.ec.initTable(null, (ExportTableModel) this.jTableExport.getModel(), path, log, logWindow.getjProgressBarMain())
+                     this.ec.initTable(null,
+                                       (ExportTableModel) this.jTableExport.getModel(),
+                                       path,
+                                       this.logWindow.getjProgressBarMain())
                 );
             }
         }, "init table").start();
         
-        this.log.log(LogArea.INFO, "load config file finished", null);
+        this.ec.getLog().log(LogArea.INFO, "load config file finished", null);
     }//GEN-LAST:event_jButtonLoadActionPerformed
 
     /**
@@ -579,13 +599,16 @@ public class Extractum extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableExportKeyReleased
 
     private void jButtonConnectToDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectToDatabaseActionPerformed
-        this.ec.insertSchemataIntoExportTable(this.settings.getProperty("host"),
-                                             this.settings.getProperty("port"),
-                                             this.settings.getProperty("database"),
-                                             this.settings.getProperty("user"),
-                                             this.settings.getProperty("pw"),
-                                             (DefaultTableModel) this.jTableExportSchema.getModel(),
-                                             log);
+        this.ec.getDb().setDatabase(this.settings.getProperty("database"));
+        this.ec.getDb().setHost(this.settings.getProperty("host"));
+        this.ec.getDb().setPort(this.settings.getProperty("port"));
+        this.ec.getDb().setPw(this.dbSettings.getPw());
+        this.ec.getDb().setUser(this.settings.getProperty("user"));
+        
+        this.ec.connectToDatabase();
+        
+        this.ec.insertSchemataIntoExportTable((DefaultTableModel) this.jTableExportSchema.getModel());
+        
         this.jScrollPane2.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
         this.jTableExportSchema.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
         this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
@@ -593,14 +616,7 @@ public class Extractum extends javax.swing.JFrame {
 
     private void jTableExportSchemaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableExportSchemaMouseClicked
         String selectSchema = (String) this.jTableExportSchema.getValueAt(this.jTableExportSchema.getSelectedRow(), 0);
-        this.ec.insertTablesIntoExportTable(selectSchema,
-                                            this.settings.getProperty("host"),
-                                            this.settings.getProperty("port"),
-                                            this.settings.getProperty("database"),
-                                            this.settings.getProperty("user"),
-                                            this.settings.getProperty("pw"),
-                                            (ExportTableModel) this.jTableExport.getModel(),
-                                            log);
+        this.ec.insertTablesIntoExportTable(selectSchema, (ExportTableModel) this.jTableExport.getModel());
     }//GEN-LAST:event_jTableExportSchemaMouseClicked
 
     /**
@@ -633,18 +649,23 @@ public class Extractum extends javax.swing.JFrame {
         new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
         
         new Thread (() -> {
+            this.ec.getDb().setDatabase(this.settings.getProperty("database"));
+            this.ec.getDb().setHost(this.settings.getProperty("host"));
+            this.ec.getDb().setPort(this.settings.getProperty("port"));
+            this.ec.getDb().setPw(this.dbSettings.getPw());
+            this.ec.getDb().setUser(this.settings.getProperty("user"));
+            this.ec.connectToDatabase();
+            
             this.ec.exportTables(this.logWindow.getjProgressBarMain(),
                                  this.logWindow.getjProgressBarMinor(),
-                                 this.log,
-                                 this.settings.getProperty("host"),
-                                 this.settings.getProperty("port"),
-                                 this.settings.getProperty("user"),
-                                 this.dbSettings.getPw(),
-                                 this.settings.getProperty("database"),
                                  path,
                                  (ExportTableModel) this.jTableExport.getModel());
         }).start();
     }//GEN-LAST:event_jButtonExportActionPerformed
+
+    private void jMenuItemExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExportActionPerformed
+        this.jButtonExportActionPerformed(evt);
+    }//GEN-LAST:event_jMenuItemExportActionPerformed
 
     /**
      * @param args the command line arguments
@@ -683,7 +704,7 @@ public class Extractum extends javax.swing.JFrame {
                 Method method = util.getMethod("setWindowCanFullScreen", params);
                 method.invoke(util, window, true);
             } catch (Exception e) {
-                this.log.log(LogArea.ERROR, "Not able to load native GUI-elements of macOS", e);
+                this.ec.getLog().log(LogArea.ERROR, "Not able to load native GUI-elements of macOS", e);
                 System.out.println(e.getMessage());
             }
         }
