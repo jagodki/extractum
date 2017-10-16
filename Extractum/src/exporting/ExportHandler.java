@@ -121,7 +121,7 @@ public class ExportHandler {
             List<String> datasets = pgc.selectData(table.getSql(), log);
             
             //write all the data to a file
-            this.writeDatasetsToCsv(directory + File.pathSeparator + "data" + File.pathSeparator + table.getName() + ".csv", datasets, log, headingline, pgSec);
+            this.writeDatasetsToCsv(directory + File.separator + "data" + File.separator + table.getName() + ".csv", datasets, log, headingline, pgSec);
             
             pbMain.setValue(pbMain.getValue() + 1);
         }
@@ -167,22 +167,23 @@ public class ExportHandler {
      * @param sqlConstraint the sql-template for querying constraints
      * @param sqlTypes the sql-template for querying types of columns
      * @param sqlStatements a HashMap with table names and corresponding sql statements as key-value-pair
+     * @param dbName a String representing the name of the database
      * @return true whether export was successfull, otherwise false
      */
     public boolean exportToXml(String path,
                                DatabaseType rootObject,
                                LogArea log,
-                               ExportTableModel
-                               tableContent,
+                               ExportTableModel tableContent,
                                PostgresCommunication pgc,
                                String sqlConstraint,
                                String sqlTypes,
-                               HashMap<String, String> sqlStatements) {
-        String absolutePath = path + File.pathSeparator + "config.xml";
+                               HashMap<String, String> sqlStatements,
+                               String dbName) {
+        String absolutePath = path + File.separator + "config.xml";
         
         //create the JAXB object
         rootObject = this.extractConfigurationFromDatabase(tableContent,
-                pgc, log, sqlConstraint, sqlTypes, sqlStatements, absolutePath);
+                pgc, log, sqlConstraint, sqlTypes, sqlStatements, absolutePath, dbName);
         
         //check, whether a file with the specified path exists already and delete it if necessary
         boolean deleteFile = this.deleteExistingFile(absolutePath, log);
@@ -221,6 +222,7 @@ public class ExportHandler {
      * @param sqlTypes the sql-template for querying types of columns
      * @param sqlStatements the sql-select-statements as a HashMap of strings and strings
      * @param destinationDirectory the directory where all file have to be saved in
+     * @param dbName  String representing the name of the database
      * @return 
      */
     private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
@@ -229,8 +231,10 @@ public class ExportHandler {
                                                          String sqlConstraint,
                                                          String sqlTypes,
                                                          HashMap<String, String> sqlStatements,
-                                                         String destinationDirectory) {
+                                                         String destinationDirectory,
+                                                         String dbName) {
         DatabaseType dbt = new DatabaseType();
+        dbt.setName(dbName);
         
         int rowCount = tableContent.getRowCount();
         

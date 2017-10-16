@@ -33,7 +33,7 @@ public class Database {
     private String database;
     private String user;
     private String pw;
-    private Connection connection = null;
+    private Connection connection;
 
     /**
      * The empty construtor of this class.
@@ -164,9 +164,14 @@ public class Database {
     public void close(LogArea log) {
         try {
             this.connection.close();
+            log.log(LogArea.INFO, "connection to database closed successfully", null);
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "cannot close the database connection", ex);
         }
+    }
+    
+    public boolean hasDatabaseConnection() {
+        return this.connection != null;
     }
     
 }

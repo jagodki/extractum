@@ -132,7 +132,14 @@ public class ExtractumController {
         //export config file
         String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate);
         String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate);
-        eh.exportToXml(path, xmlRootElement, this.log, etm, this.pgc, constraintTemplate, typesTemplate, this.exportSql);
+        eh.exportToXml(path,
+                       xmlRootElement,
+                       this.log, etm,
+                       this.pgc,
+                       constraintTemplate,
+                       typesTemplate,
+                       this.exportSql,
+                       this.db.getDatabase());
         
         //export tables from database to CSV-files
         eh.exportToCSV(xmlRootElement, this.pgc, pbMajor, pbMinor, this.log, path);
@@ -212,7 +219,7 @@ public class ExtractumController {
             primaryKeys.add(pkConcated);
             
             //fill up the export-HashMap for storing the sql-commands
-            this.exportSql.put(table, "select * from " + table + ";");
+            this.exportSql.put(table, "select * from " + schemaName + "." + table + ";");
         }
         
         //insert all data into the ExportTableModel
@@ -261,7 +268,9 @@ public class ExtractumController {
     }
     
     public boolean connectToDatabase() {
-        this.db.close(this.log);
+        if(this.db.hasDatabaseConnection()) {
+            this.db.close(this.log);
+        }
         boolean result = this.db.connectToPostgresDatabase(this.log);
         this.pgc.setDb(this.db);
         return result;

@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "databaseType", propOrder = {
+@XmlType(name = "database", propOrder = {
     "table"
 })
 @XmlRootElement
