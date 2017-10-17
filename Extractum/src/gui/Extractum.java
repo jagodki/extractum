@@ -47,8 +47,6 @@ public class Extractum extends javax.swing.JFrame {
     private ExtractumController ec;
     private String importDirectory = "";
     private String importFile = "";
-    private String exportDirectory = "";
-    private String exportFile = "";
 
     /**
      * Creates new form Extractum
@@ -468,8 +466,8 @@ public class Extractum extends javax.swing.JFrame {
             new Thread(() -> {
                 ec.importData(this.logWindow.getjProgressBarMain(),
                               this.logWindow.getjProgressBarMinor(),
-                              "",
-                              "",
+                              this.importFile,
+                              this.importDirectory,
                               (ImportTableModel) this.jTableImport.getModel());
             }, "import data").start();
         }
@@ -519,8 +517,9 @@ public class Extractum extends javax.swing.JFrame {
      */
     private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
-        fd.setDirectory(this.settings.getProperty("path"));
+        fd.setDirectory(this.settings.getProperty("inputpath"));
         fd.setVisible(true);
+        this.settings.setProperty("inputpath", fd.getDirectory());
         this.importDirectory = fd.getDirectory();
         this.importFile = fd.getFile();
         String path = this.importDirectory + File.separator + this.importFile;
@@ -641,10 +640,9 @@ public class Extractum extends javax.swing.JFrame {
 
     private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose directory for export", FileDialog.SAVE);
-        fd.setDirectory(this.settings.getProperty("path"));
+        fd.setDirectory(this.settings.getProperty("outputpath"));
         fd.setVisible(true);
-        this.exportDirectory = fd.getDirectory();
-        String path = this.exportDirectory;
+        this.settings.setProperty("outputpath", fd.getDirectory());
         
         new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
         
@@ -658,7 +656,8 @@ public class Extractum extends javax.swing.JFrame {
             
             this.ec.exportTables(this.logWindow.getjProgressBarMain(),
                                  this.logWindow.getjProgressBarMinor(),
-                                 path,
+                                 fd.getDirectory() + File.separator + fd.getFile(),
+                                 fd.getDirectory(),
                                  (ExportTableModel) this.jTableExport.getModel());
         }).start();
     }//GEN-LAST:event_jButtonExportActionPerformed

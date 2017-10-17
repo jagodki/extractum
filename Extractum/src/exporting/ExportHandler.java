@@ -159,7 +159,8 @@ public class ExportHandler {
     
     /**
      * This function exports a given JAXB-root element to an XML file.
-     * @param path the absolute path as String as destination of the export
+     * @param configPath the absolute path as String as destination of the export
+     * @param configDirectory the directory where the configursation and the tables should be saved
      * @param rootObject the JAXB-root element
      * @param log an object for logging information
      * @param tableContent the table of the export tab of the gui
@@ -170,7 +171,8 @@ public class ExportHandler {
      * @param dbName a String representing the name of the database
      * @return true whether export was successfull, otherwise false
      */
-    public boolean exportToXml(String path,
+    public boolean exportToXml(String configPath,
+                               String configDirectory,
                                DatabaseType rootObject,
                                LogArea log,
                                ExportTableModel tableContent,
@@ -179,19 +181,18 @@ public class ExportHandler {
                                String sqlTypes,
                                HashMap<String, String> sqlStatements,
                                String dbName) {
-        String absolutePath = path + File.separator + "config.xml";
-        
         //create the JAXB object
         rootObject = this.extractConfigurationFromDatabase(tableContent,
-                pgc, log, sqlConstraint, sqlTypes, sqlStatements, absolutePath, dbName);
+                pgc, log, sqlConstraint, sqlTypes, sqlStatements,
+                "data", dbName);
         
         //check, whether a file with the specified path exists already and delete it if necessary
-        boolean deleteFile = this.deleteExistingFile(absolutePath, log);
+        boolean deleteFile = this.deleteExistingFile(configPath, log);
         if(!deleteFile) {
             return false;
         }
         
-        File outputFile = new File(new File(absolutePath).getAbsolutePath());
+        File outputFile = new File(new File(configPath).getAbsolutePath());
         try {
             //init components
             JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
@@ -267,7 +268,7 @@ public class ExportHandler {
                 tt.setSql(sqlStatements.get(tableName));
                 
                 //add the export path
-                tt.setPath(destinationDirectory + File.pathSeparator + tableName + ".csv");
+                tt.setPath(destinationDirectory + File.separator + tableName + ".csv");
                 
                 //add all columns with their name and data type
                 List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(tableName,

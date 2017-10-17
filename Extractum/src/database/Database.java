@@ -153,7 +153,7 @@ public class Database {
             this.connection = DriverManager.getConnection(
                     "jdbc:postgresql://" + this.host + ":" + this.port + "/" + this.database, this.user, this.pw);
         } catch (SQLException e) {
-            log.log(LogArea.ERROR, "connection to database failed", e);
+            log.log(LogArea.ERROR, "connection to database failed with exception", e);
             return false;
         }
         

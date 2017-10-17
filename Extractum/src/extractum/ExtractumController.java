@@ -120,7 +120,8 @@ public class ExtractumController {
     
     public boolean exportTables(JProgressBar pbMajor,
                              JProgressBar pbMinor,
-                             String path,
+                             String configPath,
+                             String configDirectory,
                              ExportTableModel etm) {
         this.log.log(LogArea.INFO, "start export of data", null);
         pbMajor.setValue(0);
@@ -132,7 +133,8 @@ public class ExtractumController {
         //export config file
         String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate);
         String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate);
-        eh.exportToXml(path,
+        eh.exportToXml(configPath,
+                       configDirectory,
                        xmlRootElement,
                        this.log, etm,
                        this.pgc,
@@ -142,7 +144,7 @@ public class ExtractumController {
                        this.db.getDatabase());
         
         //export tables from database to CSV-files
-        eh.exportToCSV(xmlRootElement, this.pgc, pbMajor, pbMinor, this.log, path);
+        eh.exportToCSV(xmlRootElement, this.pgc, pbMajor, pbMinor, this.log, configPath);
         
         return true;
     }
