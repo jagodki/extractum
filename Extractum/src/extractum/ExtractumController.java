@@ -188,6 +188,11 @@ public class ExtractumController {
     }
     
     public void insertSchemataIntoExportTable(DefaultTableModel tm) {
+        //delete all old entries
+        int rows = tm.getRowCount();
+        for(int i = 0; i < rows; i++) {
+            tm.removeRow(0);
+        }
         
         //query the names of all schemata
         String query = this.getSqlTemplate(this.pathSchemataTemplate);
