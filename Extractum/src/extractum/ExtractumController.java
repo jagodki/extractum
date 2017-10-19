@@ -126,13 +126,22 @@ public class ExtractumController {
         this.log.log(LogArea.INFO, "start export of data", null);
         pbMajor.setValue(0);
         
-        //create a new ExportHandler object and and a new JAXB-root-element
+        //create a new ExportHandler object and read in sql templates
         ExportHandler eh = new ExportHandler();
-        DatabaseType xmlRootElement = new DatabaseType();
-        
-        //export config file
         String constraintTemplate = this.getSqlTemplate(this.pathConstraintTemplate);
         String typesTemplate = this.getSqlTemplate(this.patDataTypesTemplate);
+        
+        //create a new JAXB root element
+        DatabaseType xmlRootElement = eh.extractConfigurationFromDatabase(etm,
+                                            this.pgc,
+                                            this.log,
+                                            constraintTemplate,
+                                            typesTemplate,
+                                            this.exportSql,
+                                            "data",
+                                            configPath);
+        
+        //export config file
         eh.exportToXml(configPath,
                        configDirectory,
                        xmlRootElement,

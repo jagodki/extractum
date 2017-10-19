@@ -181,11 +181,6 @@ public class ExportHandler {
                                String sqlTypes,
                                HashMap<String, String> sqlStatements,
                                String dbName) {
-        //create the JAXB object
-        rootObject = this.extractConfigurationFromDatabase(tableContent,
-                pgc, log, sqlConstraint, sqlTypes, sqlStatements,
-                "data", dbName);
-        
         //check, whether a file with the specified path exists already and delete it if necessary
         boolean deleteFile = this.deleteExistingFile(configPath, log);
         if(!deleteFile) {
@@ -226,7 +221,7 @@ public class ExportHandler {
      * @param dbName  String representing the name of the database
      * @return 
      */
-    private DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
+    public DatabaseType extractConfigurationFromDatabase(ExportTableModel tableContent,
                                                          PostgresCommunication pgc,
                                                          LogArea log,
                                                          String sqlConstraint,
