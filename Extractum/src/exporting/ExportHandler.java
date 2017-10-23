@@ -106,6 +106,10 @@ public class ExportHandler {
         pbMain.setValue(0);
         pbMain.setMaximum(tableList.size());
         
+        //create directy for storing the data
+        String exportDirectory = directory + File.separator + "data";
+        new File(exportDirectory).mkdir();
+        
         //iterate over the tables
         for(TableType table : tableList) {
             //log information
@@ -121,14 +125,14 @@ public class ExportHandler {
             List<String> datasets = pgc.selectData(table.getSql(), log);
             
             //write all the data to a file
-            this.writeDatasetsToCsv(directory + File.separator + "data" + File.separator + table.getName() + ".csv", datasets, log, headingline, pgSec);
+            this.writeDatasetsToCsv(exportDirectory + File.separator + table.getName() + ".csv", datasets, log, headingline, pgSec);
             
             pbMain.setValue(pbMain.getValue() + 1);
         }
     }
     
     /**
-     * This function delete an existing file.
+     * This function deletes an existing file.
      * <p>If the file can be deleted successfully, the function returns <code>true</code>.
      * <p>Whether it is not possible to delete the file, an exception will be send to
      * a log object for further information.
@@ -151,8 +155,6 @@ public class ExportHandler {
                         JOptionPane.ERROR_MESSAGE);
                 return false;
             }
-        } else {
-            log.log(LogArea.INFO, "a file with the specified path does not exist", null);
         }
         return true;
     }
@@ -160,7 +162,6 @@ public class ExportHandler {
     /**
      * This function exports a given JAXB-root element to an XML file.
      * @param configPath the absolute path as String as destination of the export
-     * @param configDirectory the directory where the configursation and the tables should be saved
      * @param rootObject the JAXB-root element
      * @param log an object for logging information
      * @param tableContent the table of the export tab of the gui
@@ -172,7 +173,6 @@ public class ExportHandler {
      * @return true whether export was successfull, otherwise false
      */
     public boolean exportToXml(String configPath,
-                               String configDirectory,
                                DatabaseType rootObject,
                                LogArea log,
                                ExportTableModel tableContent,
