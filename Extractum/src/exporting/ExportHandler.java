@@ -266,8 +266,8 @@ public class ExportHandler {
                 tt.setPath(destinationDirectory + File.separator + tableName + ".csv");
                 
                 //add all columns with their name and data type
-                List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(tableName,
-                        sqlTypes, log);
+                List<String> columnsNamesTypes = pgc.selectColumnNamesTypesOfTable(
+                        sqlStatements.get(tableName), log);
                 ColumnsType ct = new ColumnsType();
                 for(String entry : columnsNamesTypes) {
                     ColType column = new ColType();
@@ -275,6 +275,7 @@ public class ExportHandler {
                     column.setType(entry.split(";")[1]);
                     ct.getCol().add(column);
                 }
+                tt.setColumns(ct);
                 
                 //add the current table to the root element
                 dbt.getTable().add(tt);

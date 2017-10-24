@@ -658,7 +658,8 @@ public class Extractum extends javax.swing.JFrame {
                                  this.logWindow.getjProgressBarMinor(),
                                  fd.getDirectory() + File.separator + fd.getFile(),
                                  fd.getDirectory(),
-                                 (ExportTableModel) this.jTableExport.getModel());
+                                 (ExportTableModel) this.jTableExport.getModel(),
+                                 this.jLabelCurrentDatabase.getText());
         }).start();
     }//GEN-LAST:event_jButtonExportActionPerformed
 

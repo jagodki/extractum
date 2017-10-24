@@ -18,6 +18,7 @@ package database;
 import Utilities.LogArea;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -157,7 +158,10 @@ public class PostgresCommunication {
                 while(rs.next()) {
                     String resultEntry = "";
                     for(int i = 1; i <= columnCount; i++) {
-                        resultEntry += rs.getString(i) + ";";
+                        if(rs.getObject(i) != null) {
+                            resultEntry += rs.getObject(i).toString();
+                        }
+                        resultEntry += ";";
                     }
                     //remove the last character (;) from our result string
                     if(resultEntry.length() > 1) {
@@ -178,17 +182,36 @@ public class PostgresCommunication {
     }
 
     /**
-     * This function returns the names and types of all columns of on table.
+     * This function returns the names and types of the query result.
      * <p>The column names have index 0, the data types index 1.
      * <br>The indices are separeted by semicolons.
-     * @param table the name of the table as String
-     * @param template the correct template for the sql command
+     * @param query the sql-query
      * @param log an object for logging information
      * @return the result of the commando as a list of comma separeted Strings
      */
-    public List<String> selectColumnNamesTypesOfTable(String table, String template, LogArea log) {
-        String sqlStatement = template.replace("&table&", table);
-        List<String> result = this.selectData(sqlStatement, log);
+    public List<String> selectColumnNamesTypesOfTable(String query, LogArea log) {
+        List<String> result = new ArrayList<>();
+        
+        //prepare the query, that we receive no datasets (speed improvement)
+        if(query.toLowerCase().contains(" where ")) {
+            query = query.toLowerCase().substring(query.indexOf(" where "), query.length());
+        }
+        query = query.replaceAll(";", "").trim() + " where 1 = 2;";
+        
+        //extract the names and types of the columns
+        try {
+            PreparedStatement st = this.db.getConnection().prepareStatement(query);
+            ResultSet rs = st.executeQuery();
+            ResultSetMetaData rsm = rs.getMetaData();
+
+            int max = rsm.getColumnCount();
+            for(int i = 1; i <= max; i++) {
+                result.add(rsm.getColumnName(i) + ";" + rsm.getColumnTypeName(i));
+            }
+        } catch(SQLException ex) {
+            log.log(LogArea.ERROR, "cannot extract names and types of columns", ex);
+        }
+        
         return result;
     }
     

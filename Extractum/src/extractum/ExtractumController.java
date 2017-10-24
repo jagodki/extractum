@@ -24,7 +24,6 @@ import exporting.ExportTableModel;
 import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -123,7 +122,8 @@ public class ExtractumController {
                              JProgressBar pbMinor,
                              String configPath,
                              String dataDirectory,
-                             ExportTableModel etm) {
+                             ExportTableModel etm,
+                             String dbName) {
         this.log.log(LogArea.INFO, "start export of data", null);
         pbMajor.setValue(0);
         
@@ -140,7 +140,7 @@ public class ExtractumController {
                                             typesTemplate,
                                             this.exportSql,
                                             "data",
-                                            configPath);
+                                            dbName);
         
         //export config file
         eh.exportToXml(configPath,
@@ -155,6 +155,7 @@ public class ExtractumController {
         //export data from database
         eh.exportToCSV(xmlRootElement, this.pgc, pbMajor, pbMinor, this.log, dataDirectory);
         
+        this.log.log(LogArea.INFO, "export finished ^o^", null);
         return true;
     }
     
