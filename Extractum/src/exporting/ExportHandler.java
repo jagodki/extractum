@@ -58,7 +58,11 @@ public class ExportHandler {
      * @param pb a progress bar object to indicate the progress of the export
      * @return true whether export was successfull, otherwise false
      */
-    private boolean writeDatasetsToCsv(String path, List<String> datasets, LogArea log, String columnNames, JProgressBar pb) {
+    private boolean writeDatasetsToCsv(String path,
+                                       List<String> datasets,
+                                       LogArea log,
+                                       String columnNames,
+                                       JProgressBar pb) {
         //init the progressbar
         pb.setMaximum(datasets.size());
         pb.setValue(0);
@@ -71,7 +75,7 @@ public class ExportHandler {
         
         //add each list entry to the specified file
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(path, true))) {
-            bw.write(columnNames);
+            bw.write(columnNames + "\n");
             for(String dataset : datasets) {
                 bw.write(dataset + "\n");
                 pb.setValue(pb.getValue() + 1);
@@ -100,7 +104,12 @@ public class ExportHandler {
      * @param log an object for logging information
      * @param directory the directory, where all files should be saved in
      */
-    public void exportToCSV(DatabaseType dbt, PostgresCommunication pgc, JProgressBar pbMain, JProgressBar pgSec, LogArea log, String directory) {
+    public void exportToCSV(DatabaseType dbt,
+                            PostgresCommunication pgc,
+                            JProgressBar pbMain,
+                            JProgressBar pgSec,
+                            LogArea log,
+                            String directory) {
         //init routines
         List<TableType> tableList = dbt.getTable();
         pbMain.setValue(0);
@@ -116,16 +125,18 @@ public class ExportHandler {
             log.log(LogArea.INFO, "start export of table " + table.getName(), null);
             
             //get the column names for the heading line
-            int indexOfSelect = table.getSql().toLowerCase().indexOf("select") + 6;
-            int indexOfFrom = table.getSql().toLowerCase().indexOf("from");
-            String columns = table.getSql().toLowerCase().substring(indexOfSelect, indexOfFrom);
-            String headingline = columns.replaceAll(" ", "").replace(",", ";");
+            String headingLine = "";
+            List<ColType> allColumns = table.getColumns().getCol();
+            for(ColType oneColumn : allColumns) {
+                headingLine += oneColumn.getName() + ";";
+            }
+            headingLine = headingLine.substring(0, headingLine.lastIndexOf(";"));
             
             //get all datasets of the table
             List<String> datasets = pgc.selectData(table.getSql(), log);
             
             //write all the data to a file
-            this.writeDatasetsToCsv(exportDirectory + File.separator + table.getName() + ".csv", datasets, log, headingline, pgSec);
+            this.writeDatasetsToCsv(exportDirectory + File.separator + table.getName() + ".csv", datasets, log, headingLine, pgSec);
             
             pbMain.setValue(pbMain.getValue() + 1);
         }
@@ -187,7 +198,7 @@ public class ExportHandler {
             return false;
         }
         
-        File outputFile = new File(new File(configPath).getAbsolutePath());
+        File outputFile = new File(configPath);
         try {
             //init components
             JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
