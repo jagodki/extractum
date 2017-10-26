@@ -214,6 +214,11 @@ public class Extractum extends javax.swing.JFrame {
 
         jTextAreaExportSql.setColumns(20);
         jTextAreaExportSql.setRows(5);
+        jTextAreaExportSql.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                jTextAreaExportSqlKeyReleased(evt);
+            }
+        });
         jScrollPane6.setViewportView(jTextAreaExportSql);
 
         jScrollPane2.setPreferredSize(new java.awt.Dimension(7500, 7500));
@@ -666,6 +671,11 @@ public class Extractum extends javax.swing.JFrame {
     private void jMenuItemExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExportActionPerformed
         this.jButtonExportActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemExportActionPerformed
+
+    private void jTextAreaExportSqlKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextAreaExportSqlKeyReleased
+        this.ec.setExportSql((String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0),
+                             this.jTextAreaExportSql.getText());
+    }//GEN-LAST:event_jTextAreaExportSqlKeyReleased
 
     /**
      * @param args the command line arguments

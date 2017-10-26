@@ -197,6 +197,10 @@ public class ExtractumController {
         return this.exportSql.get(table);
     }
     
+    public void setExportSql(String key, String value) {
+        this.exportSql.put(key, value);
+    }
+    
     public void insertSchemataIntoExportTable(DefaultTableModel tm) {
         //delete all old entries
         int rows = tm.getRowCount();

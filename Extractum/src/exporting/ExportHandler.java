@@ -100,14 +100,14 @@ public class ExportHandler {
      * @param dbt the root element of the JAXB object
      * @param pgc an object for the communication with the PostgreSQL database
      * @param pbMain a first progressbar
-     * @param pgSec a second progressbar
+     * @param pbSec a second progressbar
      * @param log an object for logging information
      * @param directory the directory, where all files should be saved in
      */
     public void exportToCSV(DatabaseType dbt,
                             PostgresCommunication pgc,
                             JProgressBar pbMain,
-                            JProgressBar pgSec,
+                            JProgressBar pbSec,
                             LogArea log,
                             String directory) {
         //init routines
@@ -121,6 +121,8 @@ public class ExportHandler {
         
         //iterate over the tables
         for(TableType table : tableList) {
+            pbSec.setValue(0);
+            
             //log information
             log.log(LogArea.INFO, "start export of table " + table.getName(), null);
             
@@ -136,7 +138,7 @@ public class ExportHandler {
             List<String> datasets = pgc.selectData(table.getSql(), log);
             
             //write all the data to a file
-            this.writeDatasetsToCsv(exportDirectory + File.separator + table.getName() + ".csv", datasets, log, headingLine, pgSec);
+            this.writeDatasetsToCsv(exportDirectory + File.separator + table.getName() + ".csv", datasets, log, headingLine, pbSec);
             
             pbMain.setValue(pbMain.getValue() + 1);
         }
