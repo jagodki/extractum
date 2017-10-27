@@ -194,7 +194,7 @@ public class PostgresCommunication {
         
         //prepare the query, that we receive no datasets (speed improvement)
         if(query.toLowerCase().contains(" where ")) {
-            query = query.toLowerCase().substring(query.indexOf(" where "), query.length());
+            query = query.toLowerCase().substring(0, query.indexOf(" where "));
         }
         query = query.replaceAll(";", "").trim() + " where 1 = 2;";
         
