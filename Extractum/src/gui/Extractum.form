@@ -110,11 +110,6 @@
             <Property name="text" type="java.lang.String" value="Help"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemLicense">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Show License"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemLog">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Show Log"/>

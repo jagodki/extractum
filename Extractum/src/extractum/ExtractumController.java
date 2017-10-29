@@ -24,12 +24,18 @@ import exporting.ExportTableModel;
 import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -58,7 +64,7 @@ public class ExtractumController {
         this.importSql = new HashMap<>();
         this.db = new Database();
         this.pgc = new PostgresCommunication();
-        this.log = new LogArea(null);
+        this.log = new LogArea(null, System.getProperty("user.dir"));
     }
     
     public ExtractumController(JTextArea ta) {
@@ -66,7 +72,7 @@ public class ExtractumController {
         this.importSql = new HashMap<>();
         this.db = new Database();
         this.pgc = new PostgresCommunication();
-        this.log = new LogArea(ta);
+        this.log = new LogArea(ta, System.getProperty("user.dir"));
     }
     
     public LogArea getLog() {

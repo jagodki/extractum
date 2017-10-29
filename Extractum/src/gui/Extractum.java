@@ -25,7 +25,10 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -47,6 +50,7 @@ public class Extractum extends javax.swing.JFrame {
     private ExtractumController ec;
     private String importDirectory = "";
     private String importFile = "";
+    private final String settingsPath = "gui/settings.properties";
 
     /**
      * Creates new form Extractum
@@ -60,7 +64,7 @@ public class Extractum extends javax.swing.JFrame {
         
         //import the settings file from class path
         try {
-            this.settings.load(getClass().getClassLoader().getResourceAsStream("gui/settings.properties"));
+            this.settings.load(getClass().getClassLoader().getResourceAsStream(settingsPath));
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null,
                 "Not able to load settings file.\nPlease reade the log for further information.",
@@ -142,7 +146,6 @@ public class Extractum extends javax.swing.JFrame {
         jMenuItemSelectAll = new javax.swing.JMenuItem();
         jMenuItemUnselectAll = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
-        jMenuItemLicense = new javax.swing.JMenuItem();
         jMenuItemLog = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
@@ -419,9 +422,6 @@ public class Extractum extends javax.swing.JFrame {
 
         jMenuHelp.setText("Help");
 
-        jMenuItemLicense.setText("Show License");
-        jMenuHelp.add(jMenuItemLicense);
-
         jMenuItemLog.setText("Show Log");
         jMenuItemLog.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -648,7 +648,10 @@ public class Extractum extends javax.swing.JFrame {
         fd.setVisible(true);
         this.settings.setProperty("outputpath", fd.getDirectory());
         
-        new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
+        new Thread(() -> {
+            this.jMenuItemLogActionPerformed(evt);
+            this.storeProperties();
+        }, "open log window").start();
         
         new Thread (() -> {
             this.ec.getDb().setDatabase(this.settings.getProperty("database"));
@@ -676,6 +679,17 @@ public class Extractum extends javax.swing.JFrame {
                              this.jTextAreaExportSql.getText());
     }//GEN-LAST:event_jTextAreaExportSqlKeyReleased
 
+    private void storeProperties() {
+        try {
+            OutputStream output = new FileOutputStream(settingsPath);
+            this.settings.store(output, null);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Extractum.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Extractum.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     /**
      * @param args the command line arguments
      */
@@ -741,7 +755,6 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemDBConnection;
     private javax.swing.JMenuItem jMenuItemExport;
     private javax.swing.JMenuItem jMenuItemImport;
-    private javax.swing.JMenuItem jMenuItemLicense;
     private javax.swing.JMenuItem jMenuItemLog;
     private javax.swing.JMenuItem jMenuItemOpenConfig;
     private javax.swing.JMenuItem jMenuItemSelectAll;
