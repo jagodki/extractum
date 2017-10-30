@@ -18,13 +18,15 @@ package gui;
 import java.awt.event.KeyEvent;
 
 /**
- *
+ * This class representing a dialog for displaying the log information.
  * @author Christoph
  */
 public class LogWindow extends javax.swing.JDialog {
 
     /**
-     * Creates new form LogWindow2
+     * Creates new form LogWindow for displaying the log information.
+     * @param parent the parent view
+     * @param modal a boolean indicating wether the dialog is on top or not
      */
     public LogWindow(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
@@ -106,6 +108,11 @@ public class LogWindow extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This function closes the dialog wether the ESC button was pressed.
+     * The function is connected to the Form.
+     * @param evt 
+     */
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         //hide the dialog wether ESC was pressed
         if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -113,6 +120,11 @@ public class LogWindow extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_formKeyPressed
 
+    /**
+     * This function closes the dialog wether the ESC button was pressed.
+     * The function is connected to the JTextArea.
+     * @param evt 
+     */
     private void jPanel1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPanel1KeyPressed
         //hide the dialog wether ESC was pressed
         if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -171,14 +183,26 @@ public class LogWindow extends javax.swing.JDialog {
     private javax.swing.JTextArea jTextAreaLog;
     // End of variables declaration//GEN-END:variables
 
+    /**
+     * This function returns the main progressbar.
+     * @return a progressbar
+     */
     public javax.swing.JProgressBar getjProgressBarMain() {
         return jProgressBarMain;
     }
 
+    /**
+     * This function returns the minor progressbar.
+     * @return a progressbar
+     */
     public javax.swing.JProgressBar getjProgressBarMinor() {
         return jProgressBarMinor;
     }
 
+    /**
+     * This function returns the textarea.
+     * @return an object of type JTextArea
+     */
     public javax.swing.JTextArea getjTextAreaLog() {
         return jTextAreaLog;
     }

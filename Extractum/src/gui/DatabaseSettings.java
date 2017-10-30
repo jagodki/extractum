@@ -15,34 +15,38 @@
  */
 package gui;
 
-import java.util.Properties;
 import java.awt.event.KeyEvent;
+import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 
 /**
- *
+ * This class representing a dialog for setting the parametres for the database connection.
  * @author Christoph
  */
 public class DatabaseSettings extends javax.swing.JDialog {
 
-    private Properties settings;
-    private Extractum extractum;
+    private final Preferences prefs;
+    private final Extractum extractum;
     
     /**
-     * Creates new form DatabaseSettings
+     * Creates new form/dialog DatabaseSettings.
+     * @param parent the parent view
+     * @param modal a boolean indicating wether the dialog is on top or not
+     * @param prefs an object for storing settings
+     * @param extractum the object of the main window for accessing the controller class of the software
      */
-    public DatabaseSettings(java.awt.Frame parent, boolean modal, Properties settings, Extractum extractum) {
+    public DatabaseSettings(java.awt.Frame parent, boolean modal, Preferences prefs, Extractum extractum) {
         super(parent, modal);
         initComponents();
         this.setFocusable(true);
-        this.settings = settings;
+        this.prefs = prefs;
         this.extractum = extractum;
         
         //init the text and password fields
-        this.jTextFieldDb.setText(this.settings.getProperty("database"));
-        this.jTextFieldPort.setText(this.settings.getProperty("port"));
-        this.jTextFieldHost.setText(this.settings.getProperty("host"));
-        this.jTextFieldUser.setText(this.settings.getProperty("user"));
+        this.jTextFieldDb.setText(this.prefs.get("database", ""));
+        this.jTextFieldPort.setText(this.prefs.get("port", ""));
+        this.jTextFieldHost.setText(this.prefs.get("host", ""));
+        this.jTextFieldUser.setText(this.prefs.get("user", ""));
     }
 
     /**
@@ -196,6 +200,11 @@ public class DatabaseSettings extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * The function checks the parametres of the database connection.
+     * A JOptionPane pops up showing the result of the connection
+     * @param evt 
+     */
     private void jButtonCheckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCheckActionPerformed
         boolean successfullConnection = extractum.checkDbConnection(jTextFieldDb.getText(),
                                                                     jTextFieldHost.getText(),
@@ -216,15 +225,23 @@ public class DatabaseSettings extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_jButtonCheckActionPerformed
 
+    /**
+     * This function stores the database parametres and closes the dialog window.
+     * @param evt 
+     */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        this.settings.setProperty("database", this.jTextFieldDb.getText());
-        this.settings.setProperty("user", this.jTextFieldUser.getText());
-        this.settings.setProperty("port", this.jTextFieldPort.getText());
-        this.settings.setProperty("host", this.jTextFieldHost.getText());
-        //this.settings.setProperty("pw", new String(jPasswordFieldPw.getPassword()));
+        this.prefs.put("database", this.jTextFieldDb.getText());
+        this.prefs.put("user", this.jTextFieldUser.getText());
+        this.prefs.put("port", this.jTextFieldPort.getText());
+        this.prefs.put("host", this.jTextFieldHost.getText());
         this.setVisible(false);
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
+    /**
+     * This function checks, if the ESC-button was pressed.
+     * If ESC was pressend, the dialog will be closed.
+     * @param evt 
+     */
     private void formKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_formKeyPressed
         //hide the dialog wether ESC was pressed
         if(evt.getKeyCode() == KeyEvent.VK_ESCAPE) {

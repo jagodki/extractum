@@ -25,14 +25,10 @@ import java.awt.Frame;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.prefs.Preferences;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -46,35 +42,24 @@ public class Extractum extends javax.swing.JFrame {
     
     private final LogWindow logWindow;
     private final DatabaseSettings dbSettings;
-    private Properties settings;
-    private ExtractumController ec;
+    private final ExtractumController ec;
     private String importDirectory = "";
     private String importFile = "";
     private final String settingsPath = "gui/settings.properties";
+    private final Preferences prefs;
 
     /**
-     * Creates new form Extractum
+     * Creates new form Extractum as the main window.
      */
     public Extractum() {
         this.logWindow = new LogWindow(this, true);
-        this.settings = new Properties();
         this.ec = new ExtractumController(this.logWindow.getjTextAreaLog());
+        this.prefs = Preferences.userRoot().node(this.getClass().getName());
         
         this.setFocusable(true);
         
-        //import the settings file from class path
-        try {
-            this.settings.load(getClass().getClassLoader().getResourceAsStream(settingsPath));
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,
-                "Not able to load settings file.\nPlease reade the log for further information.",
-                "Settings",
-                JOptionPane.ERROR_MESSAGE);
-            this.ec.getLog().log(LogArea.ERROR, "cannot load settings file", ex);
-        }
-        
         //init the next window
-        this.dbSettings = new DatabaseSettings(this, true, this.settings, this);
+        this.dbSettings = new DatabaseSettings(this, true, this.prefs, this);
         
         enableOSXFullscreen(this);
         initComponents();
@@ -521,9 +506,9 @@ public class Extractum extends javax.swing.JFrame {
      */
     private void jButtonLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoadActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose a file", FileDialog.LOAD);
-        fd.setDirectory(this.settings.getProperty("inputpath"));
+        fd.setDirectory(this.prefs.get("inputpath", ""));
         fd.setVisible(true);
-        this.settings.setProperty("inputpath", fd.getDirectory());
+        this.prefs.put("inputpath", fd.getDirectory());
         this.importDirectory = fd.getDirectory();
         this.importFile = fd.getFile();
         String path = this.importDirectory + File.separator + this.importFile;
@@ -602,11 +587,11 @@ public class Extractum extends javax.swing.JFrame {
     }//GEN-LAST:event_jTableExportKeyReleased
 
     private void jButtonConnectToDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectToDatabaseActionPerformed
-        this.ec.getDb().setDatabase(this.settings.getProperty("database"));
-        this.ec.getDb().setHost(this.settings.getProperty("host"));
-        this.ec.getDb().setPort(this.settings.getProperty("port"));
+        this.ec.getDb().setDatabase(this.prefs.get("database", ""));
+        this.ec.getDb().setHost(this.prefs.get("host", ""));
+        this.ec.getDb().setPort(this.prefs.get("port", ""));
         this.ec.getDb().setPw(this.dbSettings.getPw());
-        this.ec.getDb().setUser(this.settings.getProperty("user"));
+        this.ec.getDb().setUser(this.prefs.get("user", ""));
         
         this.ec.connectToDatabase();
         
@@ -614,7 +599,7 @@ public class Extractum extends javax.swing.JFrame {
         
         this.jScrollPane2.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
         this.jTableExportSchema.setPreferredSize(new Dimension(this.jScrollPane2.getWidth(), this.jTableExportSchema.getRowHeight() * this.jTableExportSchema.getRowCount()));
-        this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
+        this.jLabelCurrentDatabase.setText(this.prefs.get("database", "???"));
     }//GEN-LAST:event_jButtonConnectToDatabaseActionPerformed
 
     private void jTableExportSchemaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableExportSchemaMouseClicked
@@ -644,21 +629,20 @@ public class Extractum extends javax.swing.JFrame {
 
     private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose directory for export", FileDialog.SAVE);
-        fd.setDirectory(this.settings.getProperty("outputpath"));
+        fd.setDirectory(this.prefs.get("outputpath", ""));
         fd.setVisible(true);
-        this.settings.setProperty("outputpath", fd.getDirectory());
+        this.prefs.put("outputpath", fd.getDirectory());
         
         new Thread(() -> {
             this.jMenuItemLogActionPerformed(evt);
-            this.storeProperties();
         }, "open log window").start();
         
         new Thread (() -> {
-            this.ec.getDb().setDatabase(this.settings.getProperty("database"));
-            this.ec.getDb().setHost(this.settings.getProperty("host"));
-            this.ec.getDb().setPort(this.settings.getProperty("port"));
+            this.ec.getDb().setDatabase(this.prefs.get("database", ""));
+            this.ec.getDb().setHost(this.prefs.get("host", ""));
+            this.ec.getDb().setPort(this.prefs.get("port", ""));
             this.ec.getDb().setPw(this.dbSettings.getPw());
-            this.ec.getDb().setUser(this.settings.getProperty("user"));
+            this.ec.getDb().setUser(this.prefs.get("user", ""));
             this.ec.connectToDatabase();
             
             this.ec.exportTables(this.logWindow.getjProgressBarMain(),
@@ -678,17 +662,6 @@ public class Extractum extends javax.swing.JFrame {
         this.ec.setExportSql((String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0),
                              this.jTextAreaExportSql.getText());
     }//GEN-LAST:event_jTextAreaExportSqlKeyReleased
-
-    private void storeProperties() {
-        try {
-            OutputStream output = new FileOutputStream(settingsPath);
-            this.settings.store(output, null);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Extractum.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(Extractum.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
     
     /**
      * @param args the command line arguments
