@@ -247,12 +247,6 @@ public class ExportHandler {
         
         int rowCount = tableContent.getRowCount();
         
-        //check the count of sql statement and the row count of the table
-        if(sqlStatements.size() != tableContent.getRowCount()) {
-            log.log(LogArea.WARNING, "SQL statements and table have not the same size", null);
-            return null;
-        }
-        
         for(int i = 0; i < rowCount; i++) {
             if((Boolean) tableContent.getValueAt(i, 2)) {
                 TableType tt = new TableType();
@@ -273,7 +267,12 @@ public class ExportHandler {
                 tt.setName(tableName);
                 
                 //add the sql statement
-                tt.setSql(sqlStatements.get(tableName));
+                if(sqlStatements.containsKey(tableName)) {
+                    tt.setSql(sqlStatements.get(tableName));
+                } else {
+                    log.log(LogArea.WARNING, "sql-statement for table " + tableName + " cannot saved", null);
+                    log.log(LogArea.ERROR, "Export cancelled", null);
+                }
                 
                 //add the export path
                 tt.setPath(destinationDirectory + File.separator + tableName + ".csv");
