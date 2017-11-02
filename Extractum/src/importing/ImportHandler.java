@@ -164,10 +164,10 @@ public class ImportHandler {
     }
     
     private void createSchema(String schemaName, String template, PostgresCommunication pgc, LogArea log) {
-        boolean result = pgc.createView(schemaName, template, log);
+        boolean result = pgc.createSchema(schemaName, template, log);
         if(!result) {
             JOptionPane.showMessageDialog(null,
-                        "Cannot create a new schemaName called EXTRACTUM. Maybe it already exists. Please check the log and database.",
+                        "Cannot create a new schemaName called EXTRACTUM.\nMaybe it already exists. Please check the log and database.",
                         "Import Data",
                         JOptionPane.ERROR_MESSAGE);
         } else {

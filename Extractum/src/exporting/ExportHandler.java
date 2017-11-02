@@ -21,6 +21,8 @@ import extractumXml.DatabaseType;
 import extractumXml.TableType;
 import extractumXml.ColType;
 import extractumXml.ColumnsType;
+import extractumXml.ForeignKeyType;
+import extractumXml.ForeignKeysType;
 import extractumXml.PrimaryKeyType;
 import extractumXml.PrimaryKeysType;
 import java.io.BufferedWriter;
@@ -261,6 +263,17 @@ public class ExportHandler {
                     pkt.getPrimaryKey().add(primaryKey);
                 }
                 tt.setPrimaryKeys(pkt);
+                
+                //add foreign keys
+                List<String> fk = pgc.selectColumnsOfConstraint((String) tableContent.getValueAt(i, 0),
+                        "FOREIGN KEY", sqlConstraint, log);
+                ForeignKeysType fkt = new ForeignKeysType();
+                for(String entry : fk) {
+                    ForeignKeyType foreignKey = new ForeignKeyType();
+                    foreignKey.setColumn(entry);
+                    fkt.getContent().add(foreignKey);
+                }
+                tt.setForeignKeys(fkt);
                 
                 //add the table name
                 String tableName = (String) tableContent.getValueAt(i, 0);
