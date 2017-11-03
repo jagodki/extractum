@@ -167,7 +167,7 @@ public class ImportHandler {
         boolean result = pgc.createSchema(schemaName, template, log);
         if(!result) {
             JOptionPane.showMessageDialog(null,
-                        "Cannot create a new schemaName called EXTRACTUM.\nMaybe it already exists. Please check the log and database.",
+                        "Cannot create a new schemaName called EXTRACTUM.\nMaybe it already exists.\nPlease check the log and database.",
                         "Import Data",
                         JOptionPane.ERROR_MESSAGE);
         } else {
@@ -256,7 +256,7 @@ public class ImportHandler {
                         //create the table
                         this.createTable(tableTemplate, importSchema + "." + tt.getName(), columnNames, columnTypes, pgc, log);
                         
-                        try(BufferedReader br = new BufferedReader(new FileReader(path + File.pathSeparator + tt.getPath()))) {
+                        try(BufferedReader br = new BufferedReader(new FileReader(path + File.separator + tt.getPath()))) {
                             String currentLine;
                             boolean notFirstLine = false;
                             
@@ -287,4 +287,7 @@ public class ImportHandler {
         return this.dbt;
     }
     
+    public void setDbt(DatabaseType dbt) {
+        this.dbt = dbt;
+    }
 }

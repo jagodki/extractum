@@ -24,6 +24,7 @@ import exporting.ExportTableModel;
 import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -104,22 +105,22 @@ public class ExtractumController {
     }
     
     public boolean importData(JProgressBar pbMajor,
-                           JProgressBar pbMinor,
-                           String pathOfConfigurationFile,
-                           String directoryOfData,
-                           ImportTableModel itm) {
+                              JProgressBar pbMinor,
+                              String nameOfConfigFile,
+                              String directoryOfConfigFile,
+                              ImportTableModel itm) {
         this.log.log(LogArea.INFO, "start of import data", null);
         
         //create a new ImportHandler object and load the config file
         ImportHandler ih = new ImportHandler();
-        ih.loadConfigFile(pathOfConfigurationFile, this.log);
+        ih.setDbt(ih.loadConfigFile(directoryOfConfigFile + File.separator + nameOfConfigFile, this.log));
         this.log.log(LogArea.INFO, "load config file finished", null);
         
         //now import the data using ImportHandler
         ih.importData(this.getSqlTemplate(this.pathSchemaTemplate),
                       this.getSqlTemplate(this.pathTableTemplate),
                       this.getSqlTemplate(this.pathImportTemplate),
-                      this.log, pbMajor, pbMinor, pgc, itm, directoryOfData);
+                      this.log, pbMajor, pbMinor, pgc, itm, directoryOfConfigFile);
         
         this.log.log(LogArea.INFO, "finished import data", null);
         return true;

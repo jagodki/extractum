@@ -72,10 +72,10 @@ public class ImportTableModel extends AbstractTableModel {
          return columnNames[columnIndex];
     }
     
-    @Override
-    public boolean isCellEditable(int row, int col) {
-        return (col == 4); 
-    }
+//    @Override
+//    public boolean isCellEditable(int row, int col) {
+//        return (col == 4); 
+//    }
     
     @Override
     public void setValueAt(Object value, int row, int col) {

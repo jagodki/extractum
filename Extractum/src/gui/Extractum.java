@@ -453,6 +453,10 @@ public class Extractum extends javax.swing.JFrame {
                         JOptionPane.ERROR_MESSAGE);
         } else {
             new Thread(() -> {
+                this.jMenuItemLogActionPerformed(evt);
+            }, "open log window").start();
+            
+            new Thread(() -> {
                 ec.importData(this.logWindow.getjProgressBarMain(),
                               this.logWindow.getjProgressBarMinor(),
                               this.importFile,

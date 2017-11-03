@@ -128,9 +128,9 @@ public class PostgresCommunication {
         //execute the statement
         try {
             PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
-            boolean result = st.execute();
+            boolean result = st.execute();  //result will be false, because "CREATE TABLE" has no result
             st.close();
-            return result;
+            return true;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command CREATE TABLE failed", ex);
             return false;
@@ -277,9 +277,9 @@ public class PostgresCommunication {
         //execute the statement
         try {
             PreparedStatement st = this.db.getConnection().prepareStatement(sqlCommand);
-            boolean result = st.execute();
+            boolean result = st.execute();  //result will be false, because "CREATE SCHEMA" has no result
             st.close();
-            return result;
+            return true;
         } catch (SQLException ex) {
             log.log(LogArea.ERROR, "sql command CREATE SCHEMA failed", ex);
             return false;
