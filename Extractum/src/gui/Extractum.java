@@ -457,6 +457,13 @@ public class Extractum extends javax.swing.JFrame {
             }, "open log window").start();
             
             new Thread(() -> {
+                this.ec.getDb().setDatabase(this.prefs.get("database", ""));
+                this.ec.getDb().setHost(this.prefs.get("host", ""));
+                this.ec.getDb().setPort(this.prefs.get("port", ""));
+                this.ec.getDb().setPw(this.dbSettings.getPw());
+                this.ec.getDb().setUser(this.prefs.get("user", ""));
+                this.ec.connectToDatabase();
+
                 ec.importData(this.logWindow.getjProgressBarMain(),
                               this.logWindow.getjProgressBarMinor(),
                               this.importFile,
@@ -518,9 +525,7 @@ public class Extractum extends javax.swing.JFrame {
         String path = this.importDirectory + File.separator + this.importFile;
         
         new Thread(() -> {this.jMenuItemLogActionPerformed(evt);}, "open log window").start();
-        
-        String dbName = "";
-        
+                
         new Thread(() -> {
             if(this.jTabbedPaneMain.getSelectedIndex() == 0) {
                 this.jLabelCurrentDatabase.setText(

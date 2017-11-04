@@ -85,7 +85,11 @@ public class PostgresCommunication {
         
         String values = "";
         for(int i = 0; i < datasets.length; i++) {
-            values += "'" + datasets[i] + "'" + "::" + colTypes[i];
+            if(datasets[i].equals(" ")) {
+                values += "NULL";
+            } else {
+                values += "'" + datasets[i] + "'" + "::" + colTypes[i];
+            }
             if(i != datasets.length - 1) {
                 values += ",\n";
             }
@@ -160,6 +164,8 @@ public class PostgresCommunication {
                     for(int i = 1; i <= columnCount; i++) {
                         if(rs.getObject(i) != null) {
                             resultEntry += rs.getObject(i).toString();
+                        } else {
+                            resultEntry += " ";
                         }
                         resultEntry += ";";
                     }
