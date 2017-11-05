@@ -118,7 +118,8 @@ public class ImportHandler {
     public void initExportTableFromConfigFile (String path,
                                                LogArea log,
                                                ExportTableModel exportTable,
-                                               JProgressBar pb) {
+                                               JProgressBar pb,
+                                               HashMap<String, String> sqlStatements) {
         //import the config file
         this.dbt = null;
         this.dbt = this.loadConfigFile(path, log);
@@ -142,6 +143,9 @@ public class ImportHandler {
                 primaryKeys += pk.getColumn();
             }
             tableContent.setPrimaryKey(primaryKeys);
+            
+            //SQL-statements
+            sqlStatements.put(table.getName(), table.getSql().trim());
             
             //add the new line  the list of the table content
             li.add(tableContent);
@@ -250,6 +254,11 @@ public class ImportHandler {
                         for(ColType column : columnsList) {
                             columnNames[j] = column.getName();
                             columnTypes[j] = column.getType();
+                            
+                            //avoid the usage of type serial, because data cannot be casted into serial
+                            if(columnTypes[j].equals("serial")) {
+                                columnTypes[j] = "integer";
+                            }
                             j++;
                         }
                         

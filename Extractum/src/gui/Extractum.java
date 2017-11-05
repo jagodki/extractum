@@ -544,7 +544,7 @@ public class Extractum extends javax.swing.JFrame {
             }
         }, "init table").start();
         
-        this.ec.getLog().log(LogArea.INFO, "load config file finished", null);
+        new Thread(() -> {this.ec.getLog().log(LogArea.INFO, "load config file finished", null);}, "logging").start();
     }//GEN-LAST:event_jButtonLoadActionPerformed
 
     /**

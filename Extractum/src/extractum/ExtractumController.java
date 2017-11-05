@@ -122,7 +122,7 @@ public class ExtractumController {
                       this.getSqlTemplate(this.pathImportTemplate),
                       this.log, pbMajor, pbMinor, pgc, itm, directoryOfConfigFile);
         
-        this.log.log(LogArea.INFO, "finished import data", null);
+        this.log.log(LogArea.INFO, "finished import data ^o^", null);
         return true;
     }
     
@@ -180,7 +180,7 @@ public class ExtractumController {
             itm.fireTableDataChanged();
             return ih.getDbt().getName();
         } else if(etm != null) {
-            ih.initExportTableFromConfigFile(path, this.log, etm, pb);
+            ih.initExportTableFromConfigFile(path, this.log, etm, pb, this.exportSql);
             etm.fireTableDataChanged();
             return ih.getDbt().getName();
         }
