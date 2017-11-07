@@ -57,6 +57,10 @@ public class Database {
         this.pw = pw;
     }
 
+    /**
+     * This function sets a new password.
+     * @param pw the new password as String
+     */
     public void setPw(String pw) {
         this.pw = pw;
     }
@@ -161,6 +165,10 @@ public class Database {
         return true;
     }
     
+    /**
+     * This function closes the current database connection.
+     * @param log a LogArea object
+     */
     public void close(LogArea log) {
         try {
             this.connection.close();
@@ -170,6 +178,10 @@ public class Database {
         }
     }
     
+    /**
+     * This function checks, whether a connection to the database is active.
+     * @return true if connection is active, otherwise false
+     */
     public boolean hasDatabaseConnection() {
         return this.connection != null;
     }

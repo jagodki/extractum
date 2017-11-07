@@ -24,7 +24,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 
 /**
- * 
+ * This class is the logging class.
+ * Given information will be logged into a JTextArea and written to a log file.
  * @author Christoph
  */
 public class LogArea {
@@ -35,6 +36,12 @@ public class LogArea {
     public final static String ERROR = "ERROR";
     private final String logPath;
 
+    /**
+     * The constructor of this class.
+     * A new log file will be created in a log directory, specified by a given String.
+     * @param log a JTextArea for displaying the information
+     * @param path a String representing the directory for logging
+     */
     public LogArea(JTextArea log, String path) {
         this.log = log;
         
@@ -56,11 +63,22 @@ public class LogArea {
         }
     }
     
+    /**
+     * This function writes an information at the end of the content of a JTextArea.
+     * @param logContent information, that should be logged
+     */
     private void writeLog(String logContent) {
-        log.append(logContent + "\n");
-        log.setCaretPosition(log.getDocument().getLength());
+        this.log.append(logContent + "\n");
+        this.log.setCaretPosition(this.log.getDocument().getLength());
     }
     
+    /**
+     * This function writes the given information into a JTextArea and/or into a log file,
+     * depending on the message type.
+     * @param messageType one of the final static strings of this class
+     * @param message the information that should be logged
+     * @param ex an exception object
+     */
     public void log(String messageType, String message, Exception ex) {
         switch(messageType) {
             case "INFO":
@@ -92,6 +110,10 @@ public class LogArea {
         }
     }
     
+    /**
+     * This function writes an information into the log file.
+     * @param message the log information
+     */
     private void writeIntoLogFile(String message) {
         try(BufferedWriter bw = new BufferedWriter(new FileWriter(this.logPath, true))) {
             bw.write(message + "\n");

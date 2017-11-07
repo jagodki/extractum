@@ -38,7 +38,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 /**
- *
+ * This class provides functions for the data export.
  * @author Christoph
  */
 public class ExportHandler {
