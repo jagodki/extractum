@@ -20,7 +20,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * This class represents the model of the export table.
  * @author Christoph
  */
 public class ExportTableModel extends AbstractTableModel {
@@ -29,9 +29,16 @@ public class ExportTableModel extends AbstractTableModel {
     private final String[] columnNames = {"Table", "Primary Key", "Export?"};
     private final Class[] columnClass = {String.class, String.class, Boolean.class};
     
+    /**
+     * The empty constructor.
+     */
     public ExportTableModel() {
     }
 
+    /**
+     * This function replaces the current datasets with new ones.
+     * @param li a List of ExportTableContent representing the whole data of the table
+     */
     public void setLi(List<ExportTableContent> li) {
         this.li = li;
     }
@@ -71,6 +78,13 @@ public class ExportTableModel extends AbstractTableModel {
          return columnNames[columnIndex];
     }
     
+    /**
+     * This function returns true, whether a Cell is editable.
+     * Only cells of column 2 are editable.
+     * @param row zero based index of the row
+     * @param col zero based index of the column
+     * @return true whether the column index is 2
+     */
     @Override
     public boolean isCellEditable(int row, int col) {
         return (col == 2); 
@@ -92,6 +106,11 @@ public class ExportTableModel extends AbstractTableModel {
         }
     }
     
+    /**
+     * This function returns a whole dataset depending of the index of the row.
+     * @param rowIndex the zero based index of the needed row
+     * @return a whole dataset/tupel as ExportTableContent
+     */
     public ExportTableContent getRow(int rowIndex) {
         return this.li.get(rowIndex);
     }
