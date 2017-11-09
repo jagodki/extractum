@@ -25,25 +25,19 @@ import extractumXml.DatabaseType;
 import importing.ImportHandler;
 import importing.ImportTableModel;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.prefs.Preferences;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * This class contains functions, that will be called from the GUI, i.e. it is an
+ * interface between GUI und deeper logic of the software.
  * @author Christoph
  */
 public class ExtractumController {
@@ -53,6 +47,7 @@ public class ExtractumController {
     private final LogArea log;
     private final HashMap<String, String> importSql;
     private final HashMap<String, String> exportSql;
+    
     private final String pathSchemaTemplate = "src/sqlTemplates/schema.sql";
     private final String pathTableTemplate = "src/sqlTemplates/create.sql";
     private final String pathImportTemplate = "src/sqlTemplates/insert.sql";
@@ -61,6 +56,9 @@ public class ExtractumController {
     private final String pathConstraintTemplate = "src/sqlTemplates/constraint.sql";
     private final String patDataTypesTemplate = "src/sqlTemplates/datatypes.sql";
     
+    /**
+     * The construtor of this class, which will initialise the class members.
+     */
     public ExtractumController() {
         this.exportSql = new HashMap<>();
         this.importSql = new HashMap<>();
@@ -69,6 +67,11 @@ public class ExtractumController {
         this.log = new LogArea(null, System.getProperty("user.dir"));
     }
     
+    /**
+     * The constructor of this class, which will initialise the class members
+     * and create a full functional logging-object.
+     * @param ta a JTextArea for initialising the logging-object
+     */
     public ExtractumController(JTextArea ta) {
         this.exportSql = new HashMap<>();
         this.importSql = new HashMap<>();
@@ -77,10 +80,18 @@ public class ExtractumController {
         this.log = new LogArea(ta, System.getProperty("user.dir"));
     }
     
+    /**
+     * The funtion returns the LogArea-object for logging information.
+     * @return a LogArea-object
+     */
     public LogArea getLog() {
         return log;
     }
     
+    /**
+     * This function returns the Database-member of the current object.
+     * @return a Database object
+     */
     public Database getDb() {
         return this.db;
     }
@@ -104,6 +115,17 @@ public class ExtractumController {
         return result.trim();
     }
     
+    /**
+     * This function imports data into the database, represented by the member of type Database
+     * of the current object.
+     * <p>The import depends on the content of the import table, i.e. which tables should imported.</p>
+     * @param pbMajor the major progressbar
+     * @param pbMinor the minor progressbar
+     * @param nameOfConfigFile the name of the configuration file
+     * @param directoryOfConfigFile the directory of the configuration file
+     * @param itm the table model of the import table
+     * @return false whether something went wrong
+     */
     public boolean importData(JProgressBar pbMajor,
                               JProgressBar pbMinor,
                               String nameOfConfigFile,
