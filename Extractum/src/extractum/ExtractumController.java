@@ -148,6 +148,19 @@ public class ExtractumController {
         return true;
     }
     
+    /**
+     * This function exports all tables that are represented in the export table.
+     * <br>In the first step, the configuration file as XML will be exported.
+     * <br>In the second step, each table from the given database, that is marked
+     * as exportable in the export table, will be exported.
+     * @param pbMajor the major progressbar
+     * @param pbMinor the minor progressbar
+     * @param configPath the absolute path for storing the config file
+     * @param dataDirectory the directory where the config file should be stored
+     * @param etm the table model of the export table
+     * @param dbName the name of the database
+     * @return false whether something went wrong
+     */
     public boolean exportTables(JProgressBar pbMajor,
                              JProgressBar pbMinor,
                              String configPath,
@@ -189,6 +202,17 @@ public class ExtractumController {
         return true;
     }
     
+    /**
+     * This function initialises the import or the export table, depending on
+     * which tab is currently active.
+     * <br>The table will be filled up with the information from the config file.
+     * @param itm the table model of the import table
+     * @param etm the table model of the export table
+     * @param path the absolute path to the config file
+     * @param pb the progressbar for indicating the progress
+     * @return a String representing the name of the database, which is stored in the config file
+     * (something went wrong, the String "---" will be returned)
+     */
     public String initTable(ImportTableModel itm,
                           ExportTableModel etm,
                           String path,
