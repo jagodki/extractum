@@ -251,10 +251,20 @@ public class ExtractumController {
         return this.exportSql.get(table);
     }
     
-    public void setExportSql(String key, String value) {
+    /**
+     * This function adss a new SQL-select-command, referred to an entry in the export table.
+     * @param key the name of a table from database
+     * @param value the sql-select-command for the specified table
+     */
+    public void addExportSql(String key, String value) {
         this.exportSql.put(key, value);
     }
     
+    /**
+     * This function queries all schemata from the current (before initialised)
+     * database and adds their names to the schemata-table in the gui.
+     * @param tm the DefaultTableModel of the schemata-table
+     */
     public void insertSchemataIntoExportTable(DefaultTableModel tm) {
         //delete all old entries
         int rows = tm.getRowCount();
@@ -274,6 +284,12 @@ public class ExtractumController {
         }
     }
     
+    /**
+     * This function queries all tables within the given schema and adds them (inclusive
+     * additional information like primary keys) as datasets to the export table.
+     * @param schemaName the name of the schema for querying the table names
+     * @param etm the table model of the export table
+     */
     public void insertTablesIntoExportTable(String schemaName,
                                             ExportTableModel etm) {
         //get all tables by their name
@@ -310,6 +326,12 @@ public class ExtractumController {
         etm.fireTableDataChanged();
     }
     
+    /**
+     * This function sets all entries of the import or export table as exportable.
+     * @param tabIndex the index of the current tab for identifying, in which table (export or import) all entries should be exportable
+     * @param itm the table model of the import table
+     * @param etm  the table model of the export table
+     */
     public void selectAll(int tabIndex, ImportTableModel itm, ExportTableModel etm) {
         if(tabIndex == 0) {
             int maxRow = itm.getRowCount();
@@ -326,6 +348,12 @@ public class ExtractumController {
         }
     }
     
+    /**
+     * This function sets all entries of the import or export table as non exportable
+     * @param tabIndex the index of the current tab for identifying, in which table (export or import) all entries should be non exportable
+     * @param itm the table model of the import table
+     * @param etm  the table model of the export table
+     */
     public void unselectAll(int tabIndex, ImportTableModel itm, ExportTableModel etm) {
         if(tabIndex == 0) {
             int maxRow = itm.getRowCount();
@@ -342,6 +370,14 @@ public class ExtractumController {
         }
     }
     
+    /**
+     * This function starts the connection to the database.
+     * <p>It is mendatory that all database parametres are given to the Database member
+     * of the current object, before you call this function.</p>
+     * <p>In a first step, a possible open connection will be closed, before a new
+     * connection will be started.</p>
+     * @return false whether something went wrong
+     */
     public boolean connectToDatabase() {
         if(this.db.hasDatabaseConnection()) {
             this.db.close(this.log);

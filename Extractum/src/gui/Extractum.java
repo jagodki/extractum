@@ -668,7 +668,7 @@ public class Extractum extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItemExportActionPerformed
 
     private void jTextAreaExportSqlKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextAreaExportSqlKeyReleased
-        this.ec.setExportSql((String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0),
+        this.ec.addExportSql((String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0),
                              this.jTextAreaExportSql.getText());
     }//GEN-LAST:event_jTextAreaExportSqlKeyReleased
     
