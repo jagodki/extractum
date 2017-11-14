@@ -35,7 +35,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * This class respresents the main window.
  * @author Christoph
  */
 public class Extractum extends javax.swing.JFrame {
@@ -68,6 +68,15 @@ public class Extractum extends javax.swing.JFrame {
         //this.jLabelCurrentDatabase.setText(this.settings.getProperty("database"));
     }
     
+    /**
+     * This function checks, whether a connection to a database can be established or not.
+     * @param db the name of the database
+     * @param host the host of the database server
+     * @param port the port number for connection to the server
+     * @param user the user name for authentification at the server
+     * @param pw the password for authentification at the server
+     * @return true if connection could established, otherwise false
+     */
     protected boolean checkDbConnection(String db, String host, String port, String user, String pw) {
         this.ec.getDb().setDatabase(db);
         this.ec.getDb().setHost(host);
@@ -78,6 +87,10 @@ public class Extractum extends javax.swing.JFrame {
         return this.ec.connectToDatabase();
     }
     
+    /**
+     * This function returns the LogArea-member of the controller-object.
+     * @return a LogArea-object
+     */
     protected LogArea getLog() {
         return this.ec.getLog();
     }
@@ -595,6 +608,13 @@ public class Extractum extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTableExportKeyReleased
 
+    /**
+     * This function connects to a database and insert all schemata from the database into
+     * the schema table in the export tab.
+     * <p>If the connection could not be established, the label for displaying the name of
+     * the database will show the String "???".</p>
+     * @param evt 
+     */
     private void jButtonConnectToDatabaseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectToDatabaseActionPerformed
         this.ec.getDb().setDatabase(this.prefs.get("database", ""));
         this.ec.getDb().setHost(this.prefs.get("host", ""));
@@ -611,6 +631,11 @@ public class Extractum extends javax.swing.JFrame {
         this.jLabelCurrentDatabase.setText(this.prefs.get("database", "???"));
     }//GEN-LAST:event_jButtonConnectToDatabaseActionPerformed
 
+    /**
+     * This function is called after a mouse click on an entry in the schema table.
+     * All tables within the schema will be queried and inserted into the main export table.
+     * @param evt 
+     */
     private void jTableExportSchemaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTableExportSchemaMouseClicked
         String selectSchema = (String) this.jTableExportSchema.getValueAt(this.jTableExportSchema.getSelectedRow(), 0);
         this.ec.insertTablesIntoExportTable(selectSchema, (ExportTableModel) this.jTableExport.getModel());
@@ -636,6 +661,10 @@ public class Extractum extends javax.swing.JFrame {
                           (ExportTableModel) this.jTableExport.getModel());
     }//GEN-LAST:event_jMenuItemUnselectAllActionPerformed
 
+    /**
+     * This functin starts the export of tables from the database.
+     * @param evt 
+     */
     private void jButtonExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonExportActionPerformed
         FileDialog fd = new FileDialog(new Frame(), "Choose directory for export", FileDialog.SAVE);
         fd.setDirectory(this.prefs.get("outputpath", ""));
@@ -663,10 +692,21 @@ public class Extractum extends javax.swing.JFrame {
         }).start();
     }//GEN-LAST:event_jButtonExportActionPerformed
 
+    /**
+     * This functin starts the export of tables from the database.
+     * @param evt 
+     */
     private void jMenuItemExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemExportActionPerformed
         this.jButtonExportActionPerformed(evt);
     }//GEN-LAST:event_jMenuItemExportActionPerformed
 
+    /**
+     * This function updates the SQL-select-statement for a given table.
+     * <p>In the class ExtractumController, HashMaps will store the select-statement
+     * for each table. After every key release, the new String in the text area
+     * will be taken for updating the SQL-statement of the specific table in the HashMap.</p>
+     * @param evt 
+     */
     private void jTextAreaExportSqlKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextAreaExportSqlKeyReleased
         this.ec.addExportSql((String) ((ExportTableModel) this.jTableExport.getModel()).getValueAt(this.jTableExport.getSelectedRow(), 0),
                              this.jTextAreaExportSql.getText());

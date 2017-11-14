@@ -39,7 +39,7 @@ import javax.xml.bind.JAXBIntrospector;
 import javax.xml.bind.Unmarshaller;
 
 /**
- *
+ * This class provides functions for the data import.
  * @author Christoph
  */
 public class ImportHandler {
@@ -53,6 +53,12 @@ public class ImportHandler {
         this.dbt = null;
     }
     
+    /**
+     * This function loads a configuration file (XML) into the JAXB-class-structure.
+     * @param path the absolute path to the config file
+     * @param log a LogArea object
+     * @return false if something went wrong
+     */
     public DatabaseType loadConfigFile(String path, LogArea log) {
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(DatabaseType.class);
@@ -64,6 +70,15 @@ public class ImportHandler {
         }
     }
     
+    /**
+     * This function inits the import table from the information of a config file.
+     * @param path the absolute path to the config file
+     * @param log a LogArea object
+     * @param importTable the table model of the import table
+     * @param pb a progressbar for showing the progress of import
+     * @param sqlStatements a HashMap with tables as keys and their SQL-statements as values, will
+     * be filled up with information from the config file
+     */
     public void initImportTableFromConfigFile(String path,
                                               LogArea log,
                                               ImportTableModel importTable,
@@ -115,6 +130,15 @@ public class ImportHandler {
         importTable.setLi(li);
     }
     
+    /**
+     * This function inits the export table from the information of a config file.
+     * @param path the absolute path to the config file
+     * @param log a LogArea object
+     * @param exportTable the table model of the export table
+     * @param pb a progressbar for showing the progress of import
+     * @param sqlStatements a HashMap with tables as keys and their SQL-statements as values, will
+     * be filled up with information from the config file
+     */
     public void initExportTableFromConfigFile (String path,
                                                LogArea log,
                                                ExportTableModel exportTable,
@@ -155,6 +179,13 @@ public class ImportHandler {
         exportTable.setLi(li);
     }
     
+    /**
+     * This function creates a new view called "extractum" in the database.
+     * @param viewName the name of the view
+     * @param template the SQL-template
+     * @param pgc an object for communicate with the database
+     * @param log a LogArea object
+     */
     private void createView(String viewName, String template, PostgresCommunication pgc, LogArea log) {
         boolean result = pgc.createView(viewName, template, log);
         if(!result) {
@@ -167,6 +198,13 @@ public class ImportHandler {
         }
     }
     
+    /**
+     * This function creates a new schema called "extractum" in the database.
+     * @param schemaName the name of the view
+     * @param template the SQL-template
+     * @param pgc an object for communicate with the database
+     * @param log a LogArea object
+     */
     private void createSchema(String schemaName, String template, PostgresCommunication pgc, LogArea log) {
         boolean result = pgc.createSchema(schemaName, template, log);
         if(!result) {
@@ -179,6 +217,15 @@ public class ImportHandler {
         }
     }
     
+    /**
+     * This function creates a new table in the database.
+     * @param template the SQL-template for the CREATE TABLE-query
+     * @param tableName the name of the new table
+     * @param columnNames the names of the columns as an array of Strings
+     * @param colTypes the types of the columns as an array of Strings
+     * @param pgc an object for communicate with the database
+     * @param log a LogArea object
+     */
     private void createTable(String template,
                              String tableName,
                              String[] columnNames,
@@ -196,6 +243,16 @@ public class ImportHandler {
         }
     }
     
+    /**
+     * This function imports a given dataset into a table of the database.
+     * @param template the SQL-template for inserting values
+     * @param tableName the name of the table
+     * @param columnNames the names of the columns as an array of Strings
+     * @param colTypes the types of the columns as an array of Strings
+     * @param data the data as a semicolon-separated String
+     * @param log a LogArea object
+     * @param pgc an object for communicate with the database
+     */
     private void importDataset(String template,
                                String tableName,
                                String[] columnNames,
@@ -223,6 +280,19 @@ public class ImportHandler {
         }
     }
     
+    /**
+     * This function prepares the database for the data import (e.g. create schema and tables)
+     * and at the end, starts the import of the data.
+     * @param schemaTemplate the SQL-template for creating a new schema
+     * @param tableTemplate the SQL-template for creating a new table
+     * @param importTemplate the SQL-template for insert values
+     * @param log a LogArea object
+     * @param mainPb the main progressbar
+     * @param secondPb the minor progressbar
+     * @param pgc an object for communicate with the database
+     * @param itm the table model of the import table
+     * @param path the directory of the config file
+     */
     public void importData(String schemaTemplate,
                            String tableTemplate,
                            String importTemplate,
@@ -232,7 +302,7 @@ public class ImportHandler {
                            PostgresCommunication pgc,
                            ImportTableModel itm,
                            String path) {
-        //create the new view for importing the data
+        //create the new schema for importing the data
         String importSchema = "extractum";
         this.createSchema(importSchema, schemaTemplate, pgc, log);
         
@@ -292,10 +362,18 @@ public class ImportHandler {
         }
     }
 
+    /**
+     * This function retunrs the Database member of this class.
+     * @return a Database object
+     */
     public DatabaseType getDbt() {
         return this.dbt;
     }
     
+    /**
+     * This function sets a new Database member for this class.
+     * @param dbt the new Database object
+     */
     public void setDbt(DatabaseType dbt) {
         this.dbt = dbt;
     }
