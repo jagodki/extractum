@@ -20,7 +20,7 @@ import java.util.List;
 import javax.swing.table.AbstractTableModel;
 
 /**
- *
+ * This class represents the model of the import table.
  * @author Christoph
  */
 public class ImportTableModel extends AbstractTableModel {
@@ -29,13 +29,16 @@ public class ImportTableModel extends AbstractTableModel {
     private final String[] columnNames = {"Table", "Primary Key", "Foreign Key", "Path", "Import?"};
     private final Class[] columnClass = {String.class, String.class, String.class, String.class, Boolean.class};
     
+    /**
+     * The constructor of this class.
+     * @param li a list of ImportTableContent, i.e. the datasets of the table
+     */
     public void setLi(List<ImportTableContent> li) {
         this.li = li;
     }
     
     @Override
-    public Class<?> getColumnClass(int columnIndex)
-    {
+    public Class<?> getColumnClass(int columnIndex) {
         return columnClass[columnIndex];
     }
     
@@ -68,7 +71,7 @@ public class ImportTableModel extends AbstractTableModel {
     }
     
     @Override
-    public String getColumnName(int columnIndex){
+    public String getColumnName(int columnIndex) {
          return columnNames[columnIndex];
     }
     
@@ -99,6 +102,11 @@ public class ImportTableModel extends AbstractTableModel {
         }
     }
     
+    /**
+     * This functions extracts a whole dataset from the table.
+     * @param rowIndex the zero based index of the dataset/row
+     * @return an object of type ImportTableContent
+     */
     public ImportTableContent getRow(int rowIndex) {
         return this.li.get(rowIndex);
     }
