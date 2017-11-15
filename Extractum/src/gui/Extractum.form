@@ -61,11 +61,6 @@
             <Property name="text" type="java.lang.String" value="Edit"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItemValidateXML">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Validate XML"/>
-              </Properties>
-            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuItemDBConnection">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Open Database Connection"/>

@@ -137,7 +137,6 @@ public class Extractum extends javax.swing.JFrame {
         jMenuItemImport = new javax.swing.JMenuItem();
         jMenuItemExport = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
-        jMenuItemValidateXML = new javax.swing.JMenuItem();
         jMenuItemDBConnection = new javax.swing.JMenuItem();
         jMenuItemConnectToDatabase = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
@@ -382,9 +381,6 @@ public class Extractum extends javax.swing.JFrame {
         jMenuBar.add(jMenuFile);
 
         jMenuEdit.setText("Edit");
-
-        jMenuItemValidateXML.setText("Validate XML");
-        jMenuEdit.add(jMenuItemValidateXML);
 
         jMenuItemDBConnection.setText("Open Database Connection");
         jMenuItemDBConnection.addActionListener(new java.awt.event.ActionListener() {
@@ -781,7 +777,6 @@ public class Extractum extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItemOpenConfig;
     private javax.swing.JMenuItem jMenuItemSelectAll;
     private javax.swing.JMenuItem jMenuItemUnselectAll;
-    private javax.swing.JMenuItem jMenuItemValidateXML;
     private javax.swing.JPanel jPanelExport;
     private javax.swing.JPanel jPanelImport;
     private javax.swing.JScrollPane jScrollPane1;
