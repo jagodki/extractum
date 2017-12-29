@@ -7,27 +7,28 @@ This application is a little tool to import and export multiple datasets from di
 ## Preliminary remark
 This project uses <b>Java SE 9</b> and the developement-version of Netbeans <b>NetBeans Dev 201712280002</b>. The source code runs on Java 8 and 9, it is not tested against other versions. The tool was developed under macOS and is not tested on other operating systems. If somebody runs the software under another OS, please create an issue with your experience.
 <br>The software is available under the terms of Apache 2.0, so feel free to use (or contribute to) the project. ^^
-<br>All documentation and the GUI are realised in english language. No further internationalisation is realised already. The software creates a LOG-file in a directory called "log" located in the same directory then the JAR-file. For each start of the software a new LOG-file will be created. The content of the current LOG-file will be displayed in the LOG-dialog (located in the Help-menu: <img src="screenshots/log-menu.png"/>).
+<br>All documentation and the GUI are realised in english language. No further internationalisation is realised already. The software creates a LOG-file in a directory called "log" located in the same directory then the JAR-file. For each start of the software a new LOG-file will be created. The content of the current LOG-file will be displayed in the LOG-dialog (located in the Help-menu:
+<br><img src="screenshots/log-menu.png"/>).<br>
 
 ## Usage and hints
 The GUI has two tabs, one for displaying a config-file (and import the data after that) and one for export data.
-<img src="screenshots/tabs.png"/>
+<br><img src="screenshots/tabs.png"/><br>
 
 ### Usage of config-file
 The configuration file will be created during the data export and will be used generally for the import. But it can be necessary for the export too:
 <br>If the export tab is activated and the "Load"-button is clicked, the content of the file will be inserted into the export tab, i.e. an export can be repeated by using its configuration. Make sure that the schema and the tables are available in the current database, otherwise the export will fail. In the paragraph about the export it is decribed why this works.
 
 ### Database Connection
-<img src="screenshots/database_connection.png"/>
+<br><img src="screenshots/database_connection.png"/><br>
 A connection to a database is mandatory for import into or exporting from it. Button 1 opens a new settings window. All parametres except the password will be stored in the registry (Windows) or in a Java-PLIST-file in ~/Library/Preferences/... (macOS). After closing the settings dialog, press "Connect to Database" (Button 2). In the dialog for inserting the database parametres you can check whether a connectio with the given parametres can be established or not. A JOptionPane will inform the user about the result:
-<img src="screenshots/db_check.png"/>
+<br><img src="screenshots/db_check.png"/><br>
 The log-file and -dialog will display futher information about the current status of the database connection.
 
 ### Export
 After establishing of the database connection, all available schemata of the selected database should apear in the schemata-table:
-<img src="screenshots/schemata.png"/>
+<br><img src="screenshots/schemata.png"/><br>
 Clicking on any schema will query all tables of that schema and insert them into the main table of this tab. After clicking on any table the tool inserts the current SQL-SELECT-statement of this table into the corresponding JTextArea. The default query is "SELECT * FROM table". The user can edit this statements for each table to restrict the datasets, that should be exported from the database (theoretical every SQL-statement will be executed, but it is only tested with SELECT-statements on the corresponding table). After going to another schema, all tables have the initial statement "SELECT * FROM table"! The statements will be stored internally in a HashMap with table names as keys and the statements as values. The user can enable or disable the checkboxes to tell the software, which tables of this schema should be exported:
-<img src="screenshots/checkbox.png"/>
+<br><img src="screenshots/checkbox.png"/><br>
 It is not possible to export from more than one schema at the same time.
 <br>After a click on <b>Export</b>, the user chooses the destination of the config-file and give them a name (the file extension <i>XML</i> will <b>not</b> be added automaticly). In the same directory a new folder will be created, where each table will be stored in an own CSV-file.
 <br>The software iterates over each entry in the main table of this tab and executes their queries stored in an internal HashMap. If the user imported a config-file into the export tab (described in the paragraph <i>Usage of config-file</i>), than the main table and the internal HashMap will be filled up with the information from the config file and just this data will be used for the export. So be aware, that the connected database corresponds to the config file. Otherwise an exception will be thrown.
