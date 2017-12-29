@@ -26,11 +26,14 @@ import importing.ImportHandler;
 import importing.ImportTableModel;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JProgressBar;
 import javax.swing.JTextArea;
 import javax.swing.table.DefaultTableModel;
@@ -48,13 +51,13 @@ public class ExtractumController {
     private final HashMap<String, String> importSql;
     private final HashMap<String, String> exportSql;
     
-    private final String pathSchemaTemplate = "src/sqlTemplates/schema.sql";
-    private final String pathTableTemplate = "src/sqlTemplates/create.sql";
-    private final String pathImportTemplate = "src/sqlTemplates/insert.sql";
-    private final String pathSchemataTemplate = "src/sqlTemplates/schemata.sql";
-    private final String pathTablesTemplate = "src/sqlTemplates/tables.sql";
-    private final String pathConstraintTemplate = "src/sqlTemplates/constraint.sql";
-    private final String patDataTypesTemplate = "src/sqlTemplates/datatypes.sql";
+    private final String pathSchemaTemplate = "/sqlTemplates/schema.sql";
+    private final String pathTableTemplate = "/sqlTemplates/create.sql";
+    private final String pathImportTemplate = "/sqlTemplates/insert.sql";
+    private final String pathSchemataTemplate = "/sqlTemplates/schemata.sql";
+    private final String pathTablesTemplate = "/sqlTemplates/tables.sql";
+    private final String pathConstraintTemplate = "/sqlTemplates/constraint.sql";
+    private final String patDataTypesTemplate = "/sqlTemplates/datatypes.sql";
     
     /**
      * The construtor of this class, which will initialise the class members.
@@ -105,11 +108,11 @@ public class ExtractumController {
     public String getSqlTemplate(String name) {
         String result = ""; 
         try {           
-            List<String> allLines = Files.readAllLines(Paths.get(name));
+            List<String> allLines = Files.readAllLines(Paths.get(getClass().getResource(name).toURI()));
             for(String singleLine : allLines) {
                 result += singleLine + " ";
             }
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             this.log.log(LogArea.ERROR, "cannot read SQL-template file " + name, ex);
         }
         return result.trim();
