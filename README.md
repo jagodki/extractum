@@ -19,7 +19,7 @@ The configuration file will be created during the data export and will be used g
 <br>If the export tab is activated and the "Load"-button is clicked, the content of the file will be inserted into the export tab, i.e. an export can be repeated by using its configuration. Make sure that the schema and the tables are available in the current database, otherwise the export will fail. In the paragraph about the export it is decribed why this works.
 
 ### Database Connection
-<br><img src="screenshots/database_connection.png"/><br>
+<img src="screenshots/database_connection.png"/><br>
 A connection to a database is mandatory for import into or exporting from it. Button 1 opens a new settings window. All parametres except the password will be stored in the registry (Windows) or in a Java-PLIST-file in ~/Library/Preferences/... (macOS). After closing the settings dialog, press "Connect to Database" (Button 2). In the dialog for inserting the database parametres you can check whether a connectio with the given parametres can be established or not. A JOptionPane will inform the user about the result:
 <br><img src="screenshots/db_check.png"/><br>
 The log-file and -dialog will display futher information about the current status of the database connection.
